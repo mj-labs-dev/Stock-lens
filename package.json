@@ -1,0 +1,9 @@
+{
+  "name": "adr-compare",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Compare ADR purchase cost against primary listing purchase cost.",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
