@@ -8,7 +8,7 @@ const defaults = {
   ratio: 0.1,
   localQuantity: 250,
   adrCommission: 0,
-  localCommission: 1500,
+  localCommission: 0,
   localToUsdRate: 0.00638,
   localCurrency: "JPY",
   fxStatus: ""
@@ -16,12 +16,34 @@ const defaults = {
 
 const form = document.querySelector("#calculatorForm");
 const fields = Array.from(form.elements).filter((field) => field.name);
-const storageKey = "adr-local-comparator-inputs-v5";
+const storageKey = "adr-local-comparator-inputs-v6";
 const suggestionCache = {
   adr: new Map(),
   local: new Map()
 };
 const debounceTimers = {};
+const currencyNames = {
+  USD: "US Dollar",
+  EUR: "Euro",
+  JPY: "Japanese Yen",
+  GBP: "British Pound Sterling",
+  HKD: "Hong Kong Dollar",
+  CNY: "Chinese Yuan",
+  CNH: "Chinese Yuan Offshore",
+  INR: "Indian Rupee",
+  CAD: "Canadian Dollar",
+  AUD: "Australian Dollar",
+  CHF: "Swiss Franc",
+  SEK: "Swedish Krona",
+  NOK: "Norwegian Krone",
+  DKK: "Danish Krone",
+  SGD: "Singapore Dollar",
+  KRW: "South Korean Won",
+  TWD: "New Taiwan Dollar",
+  BRL: "Brazilian Real",
+  MXN: "Mexican Peso",
+  ZAR: "South African Rand"
+};
 
 const moneyUsd = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -80,6 +102,10 @@ function formatLocal(value, currency) {
   return `${numberFmt.format(value)} ${currency || "local"}`;
 }
 
+function getCurrencyName(code) {
+  return currencyNames[(code || "").trim().toUpperCase()] || "Unknown currency";
+}
+
 function pct(value) {
   if (!Number.isFinite(value)) return "0.00%";
   return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(2)}%`;
@@ -111,11 +137,14 @@ function calculate(values) {
   const localToUsdRate = Math.max(values.localToUsdRate, 0);
 
   const adrGrossUsd = adrQuantity * Math.max(values.adrPrice, 0);
-  const adrTotalUsd = adrGrossUsd + Math.max(values.adrCommission, 0);
+  const adrCommissionUsd = Math.max(values.adrCommission, 0);
+  const adrTotalUsd = adrGrossUsd + adrCommissionUsd;
 
   const localGross = localQuantity * Math.max(values.localPrice, 0);
-  const localTotal = localGross + Math.max(values.localCommission, 0);
+  const localCommission = Math.max(values.localCommission, 0);
+  const localTotal = localGross + localCommission;
   const localTotalUsd = localTotal * localToUsdRate;
+  const localCommissionUsd = localCommission * localToUsdRate;
 
   const impliedAdrMid = ratio > 0 ? (Math.max(values.localPrice, 0) * localToUsdRate) / ratio : 0;
   const premium = impliedAdrMid > 0 ? Math.max(values.adrPrice, 0) / impliedAdrMid - 1 : 0;
@@ -125,9 +154,12 @@ function calculate(values) {
   return {
     adrQuantity,
     adrGrossUsd,
+    adrCommissionUsd,
     adrTotalUsd,
     localQuantity,
     localGross,
+    localCommission,
+    localCommissionUsd,
     localTotal,
     localTotalUsd,
     impliedAdrMid,
@@ -146,17 +178,19 @@ function updateView() {
   const winner = tie ? "Tie" : primaryWins ? "Primary Listing" : "ADR";
   const cheaperBy = Math.abs(result.difference);
   const maxCost = Math.max(result.adrTotalUsd, result.localTotalUsd, 1);
+  const commissionDifference = result.adrCommissionUsd - result.localCommissionUsd;
+  const fxDistance = values.localToUsdRate > 0 ? (result.breakEvenFx / values.localToUsdRate) - 1 : 0;
 
   document.querySelector("#winner").textContent = winner;
   document.querySelector("#summaryLine").textContent = tie
     ? "Both routes are effectively equal on these inputs."
     : `${winner} is cheaper by ${moneyUsd.format(cheaperBy)}.`;
 
+  document.querySelector("#localPriceLabel").textContent = `Price (${currency})`;
+  document.querySelector("#localCommissionLabel").textContent = `Commission (${currency})`;
+  document.querySelector("#fxRateLabel").textContent = `FX Rate (1 ${currency} = $)`;
+  document.querySelector("#currencyName").textContent = getCurrencyName(currency);
   document.querySelector("#adrQuantityOut").textContent = numberFmt.format(result.adrQuantity);
-  document.querySelector("#adrNativeTotal").textContent = moneyUsd.format(result.adrTotalUsd);
-  document.querySelector("#localNativeTotal").textContent = formatLocal(result.localTotal, currency);
-  document.querySelector("#adrTotalUsd").textContent = moneyUsd.format(result.adrTotalUsd);
-  document.querySelector("#localTotalUsd").textContent = moneyUsd.format(result.localTotalUsd);
 
   document.querySelector("#adrChartValue").textContent = moneyUsd.format(result.adrTotalUsd);
   document.querySelector("#localChartValue").textContent = moneyUsd.format(result.localTotalUsd);
@@ -166,6 +200,15 @@ function updateView() {
   document.querySelector("#premium").textContent = pct(result.premium);
   document.querySelector("#premiumDetail").textContent = `ADR price vs ${moneyUsd.format(result.impliedAdrMid)} primary equivalent`;
   document.querySelector("#breakEvenFx").textContent = fxFmt.format(result.breakEvenFx);
+  document.querySelector("#fxInsight").textContent = primaryWins
+    ? `Primary remains cheaper until FX rises ${pct(fxDistance)} from current.`
+    : `Primary needs FX about ${pct(fxDistance)} from current to break even.`;
+  document.querySelector("#commissionImpact").textContent = moneyUsd.format(Math.abs(commissionDifference));
+  document.querySelector("#commissionInsight").textContent = Math.abs(commissionDifference) < 0.005
+    ? "Commissions are equal on these inputs."
+    : commissionDifference > 0
+      ? `ADR commission is higher by ${moneyUsd.format(Math.abs(commissionDifference))}.`
+      : `Primary commission is higher by ${moneyUsd.format(Math.abs(commissionDifference))}.`;
   document.querySelector("#shareEquivalence").textContent = `${numberFmt.format(result.adrQuantity)} ADR = ${numberFmt.format(result.localQuantity)} primary shares`;
   document.querySelector("#impliedAdr").textContent = moneyUsd.format(result.impliedAdrMid);
 
@@ -185,6 +228,18 @@ function normalizeQuote(quote) {
     venue: quote.exchange || quote.exchDisp || "",
     currency: quote.currency || ""
   };
+}
+
+function populateCurrencies() {
+  const list = document.querySelector("#currencySuggestions");
+  if (!list) return;
+
+  Object.entries(currencyNames).forEach(([code, name]) => {
+    const option = document.createElement("option");
+    option.value = code;
+    option.label = name;
+    list.append(option);
+  });
 }
 
 async function fetchJson(url) {
@@ -355,4 +410,5 @@ document.querySelector("#fxLookupButton").addEventListener("click", lookupFx);
 
 writeInputs({ ...defaults, ...getSavedInputs() });
 document.querySelector("#adrQuantityOut").classList.add("computed-output");
+populateCurrencies();
 updateView();
