@@ -474,10 +474,53 @@ function updateView() {
 
   document.querySelector("#adrChartValue").textContent = moneyUsd.format(result.adrTotalUsd);
   document.querySelector("#localChartValue").textContent = moneyUsd.format(result.localTotalUsd);
-  document.querySelector("#adrCostBar").style.width = `${Math.max((result.adrTotalUsd / maxCost) * 100, 2)}%`;
-  document.querySelector("#localCostBar").style.width = `${Math.max((result.localTotalUsd / maxCost) * 100, 2)}%`;
+  
+  // Dynamic bar colors based on which is cheaper
+  const adrBar = document.querySelector("#adrCostBar");
+  const localBar = document.querySelector("#localCostBar");
+  
+  if (result.adrTotalUsd < result.localTotalUsd) {
+    // ADR is cheaper - green for ADR, red for Primary
+    adrBar.className = 'bar-fill primary-fill'; // Use primary-fill (green) for cheaper
+    localBar.className = 'bar-fill adr-fill'; // Use adr-fill (red) for expensive
+  } else {
+    // Primary is cheaper - green for Primary, red for ADR
+    adrBar.className = 'bar-fill adr-fill'; // Use adr-fill (red) for expensive
+    localBar.className = 'bar-fill primary-fill'; // Use primary-fill (green) for cheaper
+  }
+  
+  adrBar.style.width = `${Math.max((result.adrTotalUsd / maxCost) * 100, 2)}%`;
+  localBar.style.width = `${Math.max((result.localTotalUsd / maxCost) * 100, 2)}%`;
 
-  document.querySelector("#premium").textContent = pct(result.premium);
+  // Update premium/discount label and value
+  const premiumLabel = document.querySelector("#premiumLabel");
+  const premiumValue = document.querySelector("#premium");
+  const ratioWarning = document.querySelector("#ratioWarning");
+  
+  if (result.premium > 0) {
+    // ADR is more expensive - show as Premium
+    premiumLabel.textContent = "ADR Premium";
+    premiumValue.textContent = pct(result.premium);
+  } else if (result.premium < 0) {
+    // ADR is cheaper - show as Discount (with positive percentage)
+    premiumLabel.textContent = "ADR Discount";
+    premiumValue.textContent = pct(Math.abs(result.premium));
+  } else {
+    // Equal pricing
+    premiumLabel.textContent = "ADR Premium / Discount";
+    premiumValue.textContent = "0.00%";
+  }
+  
+  // Check if premium/discount is > 10% and show ratio warning
+  const absPremium = Math.abs(result.premium);
+  if (absPremium > 0.10) {
+    ratioWarning.textContent = "⚠️ Large premium/discount detected. Please verify ratio is correct.";
+    ratioWarning.dataset.tone = 'warning';
+  } else {
+    ratioWarning.textContent = "";
+    delete ratioWarning.dataset.tone;
+  }
+  
   document.querySelector("#premiumDetail").textContent = `ADR price vs ${moneyUsd.format(result.impliedAdrMid)} primary equivalent`;
   document.querySelector("#breakEvenFx").textContent = fxFmt.format(result.breakEvenFx);
   

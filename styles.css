@@ -304,6 +304,11 @@ input:not([readonly]) {
   color: #a33b2f;
 }
 
+.field-note[data-tone="warning"] {
+  color: #d97706;
+  font-weight: 600;
+}
+
 .suggestions {
   position: absolute;
   z-index: 10;
