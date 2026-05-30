@@ -10,13 +10,19 @@
     <main class="app-shell">
       <section class="workspace" aria-labelledby="page-title">
         <header class="masthead">
-          <div>
-            <p class="eyebrow">ADR vs primary listing</p>
-            <h1 id="page-title">Cost comparison</h1>
+          <div class="header-content">
+            <h1 id="page-title">ADR Cost Comparator</h1>
+            <p class="page-description">Compare all-in costs between ADR and primary listing purchases</p>
           </div>
-          <div class="data-source" aria-label="Market data source">
-            <span class="yahoo-mark">Y!</span>
-            <span>Powered by Yahoo Finance</span>
+          <div class="utility-bar">
+            <button id="refreshButton" class="utility-button" type="button">
+              <span class="icon">↻</span>
+              Refresh
+            </button>
+            <button id="resetButton" class="utility-button" type="button">
+              <span class="icon">✕</span>
+              Reset
+            </button>
           </div>
         </header>
 
@@ -27,23 +33,21 @@
               <div class="field-stack">
                 <label class="field span-2 ticker-cell">
                   <span>Ticker</span>
-                  <div class="input-action">
-                    <input id="adrTicker" name="adrTicker" type="text" value="TM" autocomplete="off" aria-label="ADR ticker">
-                    <button class="lookup-button" id="adrLookupButton" type="button">Pull</button>
-                  </div>
+                  <input id="adrTicker" name="adrTicker" type="text" value="TM" autocomplete="off" aria-label="ADR ticker">
                   <div class="suggestions" id="adrSuggestions" role="listbox"></div>
                   <small class="security-name" id="adrName"></small>
+                </label>
+
+                <label class="field span-2">
+                  <span>Price (USD)</span>
+                  <input id="adrPrice" name="adrPrice" type="number" min="0" step="0.01" value="215.40" inputmode="decimal" aria-label="ADR stock price" readonly>
                   <small class="lookup-status" id="adrLookupStatus" role="status"></small>
                 </label>
 
-                <label class="field">
-                  <span>Price (USD)</span>
-                  <input id="adrPrice" name="adrPrice" type="number" min="0" step="0.01" value="215.40" inputmode="decimal" aria-label="ADR stock price">
-                </label>
-
-                <label class="field">
+                <label class="field span-2">
                   <span>Commission (USD)</span>
                   <input id="adrCommission" name="adrCommission" type="number" min="0" step="0.01" value="0" inputmode="decimal" aria-label="ADR total commission">
+                  <small class="field-note"></small>
                 </label>
               </div>
             </article>
@@ -53,23 +57,20 @@
               <div class="field-stack">
                 <label class="field span-2 ticker-cell">
                   <span>Ticker</span>
-                  <div class="input-action">
-                    <input id="localTicker" name="localTicker" type="text" value="7203.T" autocomplete="off" aria-label="Primary listing ticker">
-                    <button class="lookup-button" id="localLookupButton" type="button">Pull</button>
-                  </div>
+                  <input id="localTicker" name="localTicker" type="text" value="7203.T" autocomplete="off" aria-label="Primary listing ticker">
                   <div class="suggestions" id="localSuggestions" role="listbox"></div>
                   <small class="security-name" id="localName"></small>
-                  <small class="lookup-status" id="localLookupStatus" role="status"></small>
                 </label>
 
                 <label class="field">
                   <span id="localPriceLabel">Price (JPY)</span>
-                  <input id="localPrice" name="localPrice" type="number" min="0" step="0.01" value="3125" inputmode="decimal" aria-label="Primary listing stock price">
+                  <input id="localPrice" name="localPrice" type="number" min="0" step="0.01" value="3125" inputmode="decimal" aria-label="Primary listing stock price" readonly>
+                  <small class="lookup-status" id="localLookupStatus" role="status"></small>
                 </label>
 
                 <label class="field currency-cell">
                   <span>Currency</span>
-                  <input id="localCurrency" name="localCurrency" type="text" value="JPY" maxlength="8" list="currencySuggestions" autocomplete="off" aria-label="Primary listing currency">
+                  <input id="localCurrency" name="localCurrency" type="text" value="JPY" maxlength="8" list="currencySuggestions" autocomplete="off" aria-label="Primary listing currency" readonly>
                   <datalist id="currencySuggestions"></datalist>
                   <small class="security-name" id="currencyName"></small>
                 </label>
@@ -77,6 +78,7 @@
                 <label class="field span-2">
                   <span id="localCommissionLabel">Commission (JPY)</span>
                   <input id="localCommission" name="localCommission" type="number" min="0" step="0.01" value="0" inputmode="decimal" aria-label="Primary listing total commission">
+                  <small class="field-note"></small>
                 </label>
               </div>
             </article>
@@ -88,24 +90,30 @@
               <label class="field">
                 <span>Primary Qty</span>
                 <input id="localQuantity" name="localQuantity" type="number" min="0" step="0.0001" value="250" inputmode="decimal" aria-label="Primary listing stock count">
+                <small class="field-note"></small>
               </label>
 
               <label class="field">
-                <span>ADR Ratio</span>
-                <input id="ratio" name="ratio" type="number" min="0" step="0.0001" value="0.1" inputmode="decimal" aria-label="ADR units per 1 primary listing share">
+                <span>Primary to ADR Ratio</span>
+                <div class="input-with-helper">
+                  <input id="ratio" name="ratio" type="number" min="0" step="0.0001" value="0.1" inputmode="decimal" aria-label="ADR units per 1 primary listing share">
+                  <button class="helper-button ratio-helper" id="ratioSearchButton" type="button" title="Search for ADR ratio on Google">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%234285F4' d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z'/%3E%3Cpath fill='%2334A853' d='M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z'/%3E%3Cpath fill='%23FBBC05' d='M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z'/%3E%3Cpath fill='%23EA4335' d='M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z'/%3E%3C/svg%3E" alt="Google" class="google-icon">
+                    <span class="helper-text">Ratio</span>
+                  </button>
+                </div>
+                <small class="field-note"></small>
               </label>
 
               <label class="field">
                 <span>ADR Qty (Derived)</span>
                 <output id="adrQuantityOut">25</output>
+                <small class="field-note"></small>
               </label>
 
               <label class="field fx-cell">
                 <span id="fxRateLabel">FX Rate (1 JPY = $)</span>
-                <div class="input-action">
-                  <input id="localToUsdRate" name="localToUsdRate" type="number" min="0" step="0.000001" value="0.00638" inputmode="decimal" aria-label="1 primary listing currency equals USD">
-                  <button class="lookup-button" id="fxLookupButton" type="button">Pull</button>
-                </div>
+                <input id="localToUsdRate" name="localToUsdRate" type="number" min="0" step="0.000001" value="0.00638" inputmode="decimal" aria-label="1 primary listing currency equals USD" readonly>
                 <small class="lookup-status" id="fxLookupStatus" role="status"></small>
               </label>
             </div>
@@ -122,43 +130,76 @@
 
             <div class="chart-bars">
               <div class="chart-row">
-                <span>ADR</span>
+                <span class="chart-label">ADR</span>
                 <div class="bar-track"><div class="bar-fill adr-fill" id="adrCostBar"></div></div>
                 <strong id="adrChartValue">$0.00</strong>
               </div>
               <div class="chart-row">
-                <span>Primary</span>
+                <span class="chart-label">Primary</span>
                 <div class="bar-track"><div class="bar-fill primary-fill" id="localCostBar"></div></div>
                 <strong id="localChartValue">$0.00</strong>
               </div>
             </div>
+            
+            <div class="premium-section">
+              <div class="premium-metric">
+                <span class="metric-label">ADR Premium / Discount</span>
+                <strong class="metric-value" id="premium">0.00%</strong>
+              </div>
+              <small class="metric-detail" id="premiumDetail">Versus primary listing equivalent</small>
+            </div>
           </article>
 
-          <article class="insight-card">
-            <span>Break-even FX</span>
-            <strong id="breakEvenFx">0.000000</strong>
-            <small id="fxInsight">Primary listing viability is most sensitive to FX.</small>
-          </article>
-
-          <article class="insight-card">
-            <span>Commission Impact</span>
-            <strong id="commissionImpact">$0.00</strong>
-            <small id="commissionInsight">Commissions are set to zero by default.</small>
-          </article>
-
-          <article class="insight-card">
-            <span>ADR Premium / Discount</span>
-            <strong id="premium">0.00%</strong>
-            <small id="premiumDetail">Versus primary listing equivalent</small>
-          </article>
-
-          <article class="insight-card">
-            <span>Primary Equivalent / ADR</span>
-            <strong id="impliedAdr">$0.00</strong>
-            <small id="shareEquivalence">0 ADR = 0 primary shares</small>
+          <article class="insight-card fx-insight-card-wide">
+            <div class="fx-left-panel">
+              <span class="card-title">FX Sensitivity</span>
+              <div class="fx-metric-group">
+                <div class="metric-row">
+                  <label>Break-even FX</label>
+                  <strong id="breakEvenFx">0.000000</strong>
+                </div>
+                <small class="fx-insight-text" id="fxInsight">Primary listing viability is most sensitive to FX.</small>
+              </div>
+              <button class="helper-button fx-projections-btn" id="fxProjectionsButton" type="button">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%234285F4' d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z'/%3E%3Cpath fill='%2334A853' d='M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z'/%3E%3Cpath fill='%23FBBC05' d='M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z'/%3E%3Cpath fill='%23EA4335' d='M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z'/%3E%3C/svg%3E" alt="Google" class="google-icon">
+                <span class="helper-text">FX Forecast</span>
+              </button>
+            </div>
+            
+            <div class="fx-right-panel">
+              <span class="card-title">Historical Trend</span>
+              <small class="sparkline-label">6-month FX rate history</small>
+              <div class="sparkline-wrapper">
+                <div class="sparkline-label-top"></div>
+                <canvas id="fxSparkline" width="280" height="120"></canvas>
+                <div class="sparkline-label-bottom"></div>
+              </div>
+            </div>
           </article>
         </section>
       </section>
+      
+      <footer class="disclaimer">
+        <div class="footer-content">
+          <div class="data-sources">
+            <span class="source-label">Powered by</span>
+            <div class="source-item">
+              <span class="yahoo-mark">Y!</span>
+              <a href="https://finance.yahoo.com" target="_blank" rel="noopener noreferrer">Finance</a>
+            </div>
+            <span class="source-separator">•</span>
+            <a href="https://frankfurter.dev" target="_blank" rel="noopener noreferrer">Frankfurter</a>
+            <span class="source-separator">•</span>
+            <a href="https://twelvedata.com/" target="_blank" rel="noopener noreferrer">twelvedata</a>
+          </div>
+          <div class="footer-center">
+            <p>Built with <span class="heart">♥</span> in the Pacific Northwest</p>
+          </div>
+          <div class="footer-right">
+            <p class="disclaimer-text">For investors in US stock markets only</p>
+          </div>
+        </div>
+      </footer>
     </main>
 
     <script src="app.js"></script>
