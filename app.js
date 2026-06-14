@@ -3,31 +3,151 @@ const defaults = {
   adrName: "Toyota Motor Corporation",
   localTicker: "7203.T",
   localName: "Toyota Motor Corporation",
-  adrPrice: 215.40,
-  localPrice: 3125,
+  adrPrice: "",
+  localPrice: "",
   ratio: 0.1,
   localQuantity: 250,
   adrCommission: 0,
+  adrPassThroughFee: 0.03,
   localCommission: 0,
-  localToUsdRate: 0.00638,
+  localToUsdRate: "",
   localCurrency: "JPY",
   fxStatus: ""
+};
+
+const knownPairs = {
+  'TM:7203.T':       { ratio:0.1,              adr:'TM',     primary:'7203.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'BNY Mellon',    name:'Toyota Motor' },
+  'HMC:7267.T':      { ratio:0.1,              adr:'HMC',    primary:'7267.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Honda Motor' },
+  'SONY:6758.T':     { ratio:1,                adr:'SONY',   primary:'6758.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Sony Group' },
+  'MUFG:8306.T':     { ratio:1,                adr:'MUFG',   primary:'8306.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Mitsubishi UFJ Financial' },
+  'SMFG:8316.T':     { ratio:1,                adr:'SMFG',   primary:'8316.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Citibank',      name:'Sumitomo Mitsui Financial' },
+  'MFG:8411.T':      { ratio:1,                adr:'MFG',    primary:'8411.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Mizuho Financial' },
+  'NTDOY:7974.T':    { ratio:1,                adr:'NTDOY',  primary:'7974.T',       currency:'JPY', exchange:'TSE',                level:'I',   market:'OTC',     sponsored:true,  depositary:'JPMorgan',      name:'Nintendo',                  note:'Level I OTC — wider spreads than exchange-listed ADRs.' },
+  'GSK:GSK.L':       { ratio:2,                adr:'GSK',    primary:'GSK.L',        currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'GSK plc' },
+  'UL:ULVR.L':       { ratio:1,                adr:'UL',     primary:'ULVR.L',       currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'Unilever',                  alternatives:['UNLYF'] },
+  'BP:BP.L':         { ratio:2,                adr:'BP',     primary:'BP.L',         currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'BP plc',                    alternatives:['BPAQF'] },
+  'AZN:AZN.L':       { ratio:1,                adr:'AZN',    primary:'AZN.L',        currency:'GBP', exchange:'LSE',                level:'II',  market:'NASDAQ',  sponsored:true,  depositary:'JPMorgan',      name:'AstraZeneca' },
+  'RIO:RIO.L':       { ratio:1,                adr:'RIO',    primary:'RIO.L',        currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Rio Tinto',                 alternatives:['RTNTF'] },
+  'SHEL:SHEL.L':     { ratio:5,                adr:'SHEL',   primary:'SHEL.L',       currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Shell plc',                 alternatives:['SHLLF'] },
+  'HSBC:0005.HK':    { ratio:1,                adr:'HSBC',   primary:'0005.HK',      currency:'HKD', exchange:'HKEX',               level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'HSBC Holdings',             note:'Also listed on LSE as HSBA.L.' },
+  'ASML:ASML.AS':    { ratio:1,                adr:'ASML',   primary:'ASML.AS',      currency:'EUR', exchange:'Euronext Amsterdam', level:'II',  market:'NASDAQ',  sponsored:true,  depositary:'Citibank',      name:'ASML Holding' },
+  'PHG:PHIA.AS':     { ratio:1,                adr:'PHG',    primary:'PHIA.AS',      currency:'EUR', exchange:'Euronext Amsterdam', level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Philips' },
+  'EADSY:AIR.PA':    { ratio:4,                adr:'EADSY',  primary:'AIR.PA',       currency:'EUR', exchange:'Euronext Paris',     level:'I',   market:'OTC',     sponsored:false, depositary:'Multiple',      name:'Airbus SE',                 note:'Unsponsored OTC ADR. Consider buying AIR.PA directly on Euronext for tighter spreads.' },
+  'SNY:SAN.PA':      { ratio:2,                adr:'SNY',    primary:'SAN.PA',       currency:'EUR', exchange:'Euronext Paris',     level:'III', market:'NASDAQ',  sponsored:true,  depositary:'BNY Mellon',    name:'Sanofi' },
+  'LVMUY:MC.PA':     { ratio:5,                adr:'LVMUY',  primary:'MC.PA',        currency:'EUR', exchange:'Euronext Paris',     level:'I',   market:'OTC',     sponsored:true,  depositary:'BNY Mellon',    name:'LVMH' },
+  'TTEHY:TTE.PA':    { ratio:2,                adr:'TTEHY',  primary:'TTE.PA',       currency:'EUR', exchange:'Euronext Paris',     level:'I',   market:'OTC',     sponsored:true,  depositary:'JPMorgan',      name:'TotalEnergies' },
+  'SAP:SAP.DE':      { ratio:1,                adr:'SAP',    primary:'SAP.DE',       currency:'EUR', exchange:'XETRA',              level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'SAP SE' },
+  'SIEGY:SIE.DE':    { ratio:2,                adr:'SIEGY',  primary:'SIE.DE',       currency:'EUR', exchange:'XETRA',              level:'I',   market:'OTC',     sponsored:true,  depositary:'JPMorgan',      name:'Siemens AG' },
+  'BMWYY:BMW.DE':    { ratio:5,                adr:'BMWYY',  primary:'BMW.DE',       currency:'EUR', exchange:'XETRA',              level:'I',   market:'OTC',     sponsored:true,  depositary:'Citibank',      name:'BMW AG' },
+  'NVS:NOVN.SW':     { ratio:1,                adr:'NVS',    primary:'NOVN.SW',      currency:'CHF', exchange:'SIX',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Novartis' },
+  'RHHBY:ROG.SW':    { ratio:1,                adr:'RHHBY',  primary:'ROG.SW',       currency:'CHF', exchange:'SIX',                level:'I',   market:'OTC',     sponsored:true,  depositary:'JPMorgan',      name:'Roche Holding',             note:'RHHBY = non-voting bearer shares. RHHVF = voting registered shares — different share classes with different ratios.',  alternatives:['RHHVF'] },
+  'NSRGY:NESN.SW':   { ratio:1,                adr:'NSRGY',  primary:'NESN.SW',      currency:'CHF', exchange:'SIX',                level:'I',   market:'OTC',     sponsored:true,  depositary:'Citibank',      name:'Nestlé',                    note:'Level I OTC. Consider buying NESN.SW directly via IBKR for tighter spreads.' },
+  'NVO:NOVO-B.CO':   { ratio:1,                adr:'NVO',    primary:'NOVO-B.CO',    currency:'DKK', exchange:'Nasdaq Copenhagen', level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Novo Nordisk' },
+  'TSM:2330.TW':     { ratio:0.2,              adr:'TSM',    primary:'2330.TW',      currency:'TWD', exchange:'TWSE',               level:'II',  market:'NYSE',    sponsored:true,  depositary:'Citibank',      name:'TSMC',                      note:'Foreign ownership caps mean TSM ADR frequently trades at a 10–26% premium to the primary listing. Check live premium before buying.' },
+  'BABA:9988.HK':    { ratio:0.125,            adr:'BABA',   primary:'9988.HK',      currency:'HKD', exchange:'HKEX',               level:'II',  market:'NYSE',    sponsored:true,  depositary:'Citibank',      name:'Alibaba Group',             note:'Monitor PCAOB/HFCAA delisting risk quarterly.' },
+  'JD:9618.HK':      { ratio:0.5,              adr:'JD',     primary:'9618.HK',      currency:'HKD', exchange:'HKEX',               level:'II',  market:'NASDAQ',  sponsored:true,  depositary:'JPMorgan',      name:'JD.com',                    note:'Monitor PCAOB/HFCAA delisting risk quarterly.' },
+  'VALE:VALE3.SA':   { ratio:1,                adr:'VALE',   primary:'VALE3.SA',     currency:'BRL', exchange:'B3',                 level:'III', market:'NYSE',    sponsored:true,  depositary:'Citibank',      name:'Vale SA' },
+  'PBR:PETR4.SA':    { ratio:1,                adr:'PBR',    primary:'PETR4.SA',     currency:'BRL', exchange:'B3',                 level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Petrobras',                 note:'PBR = preferred shares (PETR4). PBR.A = common shares (PETR3). Ensure share class matches.' },
+  'ITUB:ITUB4.SA':   { ratio:1,                adr:'ITUB',   primary:'ITUB4.SA',     currency:'BRL', exchange:'B3',                 level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Itaú Unibanco' },
+  'HDB:HDFCBANK.NS': { ratio:0.3333,           adr:'HDB',    primary:'HDFCBANK.NS',  currency:'INR', exchange:'NSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'HDFC Bank' },
+  'IBN:ICICIBANK.NS':{ ratio:0.5,              adr:'IBN',    primary:'ICICIBANK.NS', currency:'INR', exchange:'NSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'ICICI Bank' },
+  'WIT:WIPRO.NS':    { ratio:1,                adr:'WIT',    primary:'WIPRO.NS',     currency:'INR', exchange:'NSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'Wipro' },
+  'INFY:INFY.NS':    { ratio:1,                adr:'INFY',   primary:'INFY.NS',      currency:'INR', exchange:'NSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'Infosys' },
+  'BHP:BHP.AX':      { ratio:1,                adr:'BHP',    primary:'BHP.AX',       currency:'AUD', exchange:'ASX',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'BHP Group' },
+  'SSNLF:005930.KS': { ratio:1,                adr:'SSNLF',  primary:'005930.KS',    currency:'KRW', exchange:'KRX',                level:'I',   market:'OTC',     sponsored:false, depositary:'None',          name:'Samsung Electronics',       note:'SSNLF is an OTC-traded foreign ordinary share, not a true ADR. Thinly traded — wide spreads. Consider buying 005930.KS directly on KRX via IBKR.' },
+};
+
+const tickerIndex = {};
+Object.entries(knownPairs).forEach(([key, pair]) => {
+  tickerIndex[pair.adr.toUpperCase()] = key;
+  tickerIndex[pair.primary.toUpperCase()] = key;
+});
+
+const adrRegistry = {
+  'TM':     { level:'II',  market:'NYSE',    sponsored:true },
+  'HMC':    { level:'II',  market:'NYSE',    sponsored:true },
+  'SONY':   { level:'II',  market:'NYSE',    sponsored:true },
+  'MUFG':   { level:'II',  market:'NYSE',    sponsored:true },
+  'SMFG':   { level:'II',  market:'NYSE',    sponsored:true },
+  'MFG':    { level:'II',  market:'NYSE',    sponsored:true },
+  'NTDOY':  { level:'I',   market:'OTC',     sponsored:true },
+  'GSK':    { level:'II',  market:'NYSE',    sponsored:true },
+  'UL':     { level:'II',  market:'NYSE',    sponsored:true },
+  'BP':     { level:'II',  market:'NYSE',    sponsored:true },
+  'AZN':    { level:'II',  market:'NASDAQ',  sponsored:true },
+  'RIO':    { level:'II',  market:'NYSE',    sponsored:true },
+  'SHEL':   { level:'II',  market:'NYSE',    sponsored:true },
+  'HSBC':   { level:'II',  market:'NYSE',    sponsored:true },
+  'ASML':   { level:'II',  market:'NASDAQ',  sponsored:true },
+  'PHG':    { level:'II',  market:'NYSE',    sponsored:true },
+  'EADSY':  { level:'I',   market:'OTC',     sponsored:false },
+  'SNY':    { level:'III', market:'NASDAQ',  sponsored:true },
+  'LVMUY':  { level:'I',   market:'OTC',     sponsored:true },
+  'TTEHY':  { level:'I',   market:'OTC',     sponsored:true },
+  'SAP':    { level:'II',  market:'NYSE',    sponsored:true },
+  'SIEGY':  { level:'I',   market:'OTC',     sponsored:true },
+  'BMWYY':  { level:'I',   market:'OTC',     sponsored:true },
+  'NVS':    { level:'II',  market:'NYSE',    sponsored:true },
+  'RHHBY':  { level:'I',   market:'OTC',     sponsored:true },
+  'NSRGY':  { level:'I',   market:'OTC',     sponsored:true },
+  'NVO':    { level:'III', market:'NYSE',    sponsored:true },
+  'TSM':    { level:'II',  market:'NYSE',    sponsored:true },
+  'BABA':   { level:'II',  market:'NYSE',    sponsored:true },
+  'JD':     { level:'II',  market:'NASDAQ',  sponsored:true },
+  'VALE':   { level:'III', market:'NYSE',    sponsored:true },
+  'PBR':    { level:'III', market:'NYSE',    sponsored:true },
+  'ITUB':   { level:'III', market:'NYSE',    sponsored:true },
+  'HDB':    { level:'II',  market:'NYSE',    sponsored:true },
+  'IBN':    { level:'II',  market:'NYSE',    sponsored:true },
+  'WIT':    { level:'II',  market:'NYSE',    sponsored:true },
+  'INFY':   { level:'II',  market:'NYSE',    sponsored:true },
+  'BHP':    { level:'II',  market:'NYSE',    sponsored:true },
+  'SSNLF':  { level:'I',   market:'OTC',     sponsored:false, depositary:'None',
+              warning:'SSNLF is an OTC-traded foreign ordinary share, not a true ADR. Thinly traded — wide spreads. Consider buying 005930.KS on KRX via IBKR.' },
+};
+
+const levelTooltips = {
+  'I':   { title: 'Level I ADR', detail: 'Trades OTC only. Minimal SEC reporting and no exchange listing.' },
+  'II':  { title: 'Level II ADR', detail: 'Exchange-listed. Full SEC registration, annual Form 20-F filing.' },
+  'III': { title: 'Level III ADR', detail: 'Exchange-listed. Strictest SEC requirements. Can raise capital in US markets.' },
+};
+
+const adrCommissionRate = 0.10;
+const adrCommissionNoteHtml = '<a href="https://www.ibkr.com/commissions" target="_blank" rel="noopener noreferrer">IBKR</a> · <a href="https://robinhood.com/us/en/support/articles/trading-fees-on-robinhood/" target="_blank" rel="noopener noreferrer">Robinhood</a> · <a href="https://www.schwab.com/pricing" target="_blank" rel="noopener noreferrer">Schwab</a>';
+
+function calculateAdrCommission(adrQuantity) {
+  return adrQuantity * adrCommissionRate;
+}
+
+let lastIbkrAdrCommission = null;
+let lastIbkrLocalCommission = null;
+let ibkrAdrOverridden = false;
+let ibkrLocalOverridden = false;
+
+const withholdingInfo = {
+  KRW: { rate:'15% (US treaty)',   note:'Korea withholds 15% on dividends for US investors (treaty rate; domestic rate is 22%). Claim the foreign tax credit via IRS Form 1116. Hold in a taxable account, not an IRA, to use the credit.' },
+  JPY: { rate:'10% (US treaty)',   note:'Japan withholds 10% on dividends for US investors (treaty rate; domestic rate is 20.315%). Claim via IRS Form 1116.' },
+  EUR: { rate:'Varies by country', note:'EU withholding varies: France 12.8%, Germany 25%, Netherlands 15%. Check the country-specific treaty rate. Claim via IRS Form 1116.' },
+  GBP: { rate:'0%',               note:'UK pays dividends gross — no withholding tax for US investors.' },
+  TWD: { rate:'21%',              note:'Taiwan withholds 21% on dividends. Limited treaty benefit for US investors. Claim what is eligible via IRS Form 1116.' },
+  BRL: { rate:'15%',              note:'Brazil withholds 15% on dividends for US investors. Claim via IRS Form 1116.' },
+  INR: { rate:'25% (US treaty)',  note:'India withholds 25% on dividends for US investors (treaty rate). Claim via IRS Form 1116.' },
+  HKD: { rate:'0%',              note:'Hong Kong pays dividends gross — no withholding tax at source for US investors.' },
+  AUD: { rate:'15% (US treaty)',  note:'Australia withholds 15% on dividends for US investors (treaty rate; domestic is 30%). Claim via IRS Form 1116.' },
+  CHF: { rate:'35% (refundable)', note:'Switzerland withholds 35% on dividends but the US-Switzerland treaty reduces this to 15%. Excess is refundable via Swiss tax authority. Claim net via IRS Form 1116.' },
+  DKK: { rate:'15% (US treaty)',  note:'Denmark withholds 15% on dividends for US investors (treaty rate). Claim via IRS Form 1116.' },
 };
 
 // FieldManager class for managing read-only field states
 class FieldManager {
   lockField(fieldId) {
     const field = document.querySelector(`#${fieldId}`);
-    if (field) {
-      field.setAttribute('readonly', 'readonly');
-    }
+    if (field) field.setAttribute('readonly', 'readonly');
   }
 
   unlockField(fieldId) {
     const field = document.querySelector(`#${fieldId}`);
-    if (field) {
-      field.removeAttribute('readonly');
-    }
+    if (field) field.removeAttribute('readonly');
   }
 
   updateAndLock(fieldId, value) {
@@ -70,13 +190,12 @@ const fieldManager = new FieldManager();
 class PriceFetcher {
   async autoFetch(ticker, side) {
     if (!ticker) return { success: false, error: 'No ticker provided' };
-    
+
     const fieldId = side === 'adr' ? 'adrPrice' : 'localPrice';
     const statusId = side === 'adr' ? 'adrLookupStatus' : 'localLookupStatus';
-    
+
     fieldManager.clearStatus(statusId);
-    
-    // Try Yahoo Finance first
+
     try {
       const result = await this.fetchFromYahoo(ticker);
       if (result.success) {
@@ -87,8 +206,7 @@ class PriceFetcher {
     } catch (error) {
       console.warn('Yahoo Finance failed:', error.message);
     }
-    
-    // Fallback to Twelve Data
+
     try {
       const result = await this.fetchFromTwelveData(ticker);
       if (result.success) {
@@ -99,8 +217,7 @@ class PriceFetcher {
     } catch (error) {
       console.warn('Twelve Data failed:', error.message);
     }
-    
-    // Both failed - trigger manual entry mode
+
     fieldManager.showError(statusId, fieldId, 'Unable to fetch price. Enter manually');
     return { success: false, error: 'All APIs failed' };
   }
@@ -113,16 +230,12 @@ class PriceFetcher {
     const response = await fetchJson(`/api/price?symbol=${encodeURIComponent(ticker)}`);
     const meta = response.chart?.result?.[0]?.meta;
     const price = meta?.regularMarketPrice ?? meta?.previousClose ?? meta?.chartPreviousClose;
-    
-    if (!Number.isFinite(price)) {
-      throw new Error('Invalid price data');
-    }
-    
+
+    if (!Number.isFinite(price)) throw new Error('Invalid price data');
+
     const currency = meta.currency || 'USD';
-    
-    // Normalize currency subunits (GBp -> GBP, etc.)
     const normalized = normalizeCurrencyAndPrice(currency, price);
-    
+
     return {
       success: true,
       price: normalized.price,
@@ -136,11 +249,9 @@ class PriceFetcher {
 
   async fetchFromTwelveData(ticker) {
     const response = await fetchJson(`/api/twelve-data/price?symbol=${encodeURIComponent(ticker)}`);
-    
-    if (!Number.isFinite(response.price)) {
-      throw new Error('Invalid price data');
-    }
-    
+
+    if (!Number.isFinite(response.price)) throw new Error('Invalid price data');
+
     return {
       success: true,
       price: response.price,
@@ -157,20 +268,18 @@ const priceFetcher = new PriceFetcher();
 class FXFetcher {
   async autoFetch(fromCurrency, toCurrency = 'USD') {
     if (!fromCurrency) return { success: false, error: 'No currency provided' };
-    
+
     const upperFrom = fromCurrency.toUpperCase();
     const upperTo = toCurrency.toUpperCase();
-    
-    // Handle USD to USD
+
     if (upperFrom === upperTo) {
       fieldManager.updateAndLock('localToUsdRate', '1.000000');
       fieldManager.showSuccess('fxLookupStatus', 'USD base');
       return { success: true, rate: 1, source: 'direct' };
     }
-    
+
     fieldManager.clearStatus('fxLookupStatus');
-    
-    // Try Yahoo Finance first
+
     try {
       const result = await this.fetchFromYahoo(upperFrom, upperTo);
       if (result.success) {
@@ -181,8 +290,7 @@ class FXFetcher {
     } catch (error) {
       console.warn('Yahoo FX failed:', error.message);
     }
-    
-    // Fallback to Frankfurter
+
     try {
       const result = await this.fetchFromFrankfurter(upperFrom, upperTo);
       if (result.success) {
@@ -193,8 +301,7 @@ class FXFetcher {
     } catch (error) {
       console.warn('Frankfurter failed:', error.message);
     }
-    
-    // Both failed - trigger manual entry mode
+
     fieldManager.showError('fxLookupStatus', 'localToUsdRate', 'Unable to fetch FX rate. Enter manually');
     return { success: false, error: 'All APIs failed' };
   }
@@ -206,17 +313,9 @@ class FXFetcher {
   async fetchHistory(fromCurrency, toCurrency = 'USD') {
     try {
       const response = await fetchJson(`/api/fx-history?from=${encodeURIComponent(fromCurrency)}&to=${encodeURIComponent(toCurrency)}`);
-      return {
-        success: true,
-        data: response.rates || [],
-        error: null
-      };
+      return { success: true, data: response.rates || [], error: null };
     } catch (error) {
-      return {
-        success: false,
-        data: [],
-        error: error.message
-      };
+      return { success: false, data: [], error: error.message };
     }
   }
 
@@ -225,40 +324,163 @@ class FXFetcher {
     const response = await fetchJson(`/api/price?symbol=${encodeURIComponent(pair)}`);
     const meta = response.chart?.result?.[0]?.meta;
     const rate = meta?.regularMarketPrice ?? meta?.previousClose ?? meta?.chartPreviousClose;
-    
-    if (!Number.isFinite(rate)) {
-      throw new Error('Invalid FX rate');
-    }
-    
-    return {
-      success: true,
-      rate,
-      timestamp: meta.regularMarketTime,
-      source: 'yahoo'
-    };
+
+    if (!Number.isFinite(rate)) throw new Error('Invalid FX rate');
+
+    return { success: true, rate, timestamp: meta.regularMarketTime, source: 'yahoo' };
   }
 
   async fetchFromFrankfurter(fromCurrency, toCurrency) {
     const response = await fetchJson(`/api/fx?from=${encodeURIComponent(fromCurrency)}&to=${encodeURIComponent(toCurrency)}`);
-    
-    if (!Number.isFinite(response.rate)) {
-      throw new Error('Invalid FX rate');
-    }
-    
-    return {
-      success: true,
-      rate: response.rate,
-      date: response.date,
-      source: 'frankfurter'
-    };
+
+    if (!Number.isFinite(response.rate)) throw new Error('Invalid FX rate');
+
+    return { success: true, rate: response.rate, date: response.date, source: 'frankfurter' };
   }
 }
 
 const fxFetcher = new FXFetcher();
 
+async function tryAutoPopulatePair(enteredTicker, enteredSide) {
+  if (!enteredTicker) return;
+
+  const pairKey = tickerIndex[enteredTicker.toUpperCase()];
+  if (!pairKey) return;
+
+  const pair = knownPairs[pairKey];
+  const otherSide = enteredSide === 'adr' ? 'local' : 'adr';
+  const otherTicker = enteredSide === 'adr' ? pair.primary : pair.adr;
+
+  // Always set ratio (leave editable)
+  const ratioField = document.querySelector('#ratio');
+  if (ratioField) ratioField.value = pair.ratio;
+
+  // Set ratioWarning — tag as pair-sourced so updateView doesn't overwrite with generic warning
+  const ratioWarning = document.querySelector('#ratioWarning');
+  if (ratioWarning) {
+    ratioWarning.textContent = `ⓘ Verify ratio`;
+    delete ratioWarning.dataset.tone;
+    ratioWarning.dataset.source = 'pair';
+  }
+
+  // Clear any stale alternatives note (now shown in badge tooltip)
+  const adrTickerLabel = document.querySelector('#adrTicker')?.closest('label');
+  if (adrTickerLabel) {
+    adrTickerLabel.querySelector('.alternatives-note')?.remove();
+  }
+
+  // Always apply the known currency and name for this pair — more reliable than the price API response
+  fieldManager.updateAndLock('localCurrency', pair.currency);
+  document.querySelector('#currencyName').textContent = getCurrencyName(pair.currency);
+  document.querySelector('#localName').textContent = pair.name;
+  document.querySelector('#adrName').textContent = pair.name;
+  renderAdrBadge(pair.adr);
+
+  // Always populate the other side ticker + fetch its price (whether empty or mismatched)
+  const otherField = document.querySelector(`#${otherSide === 'adr' ? 'adr' : 'local'}Ticker`);
+  if (otherField) {
+    const wasEmpty = !otherField.value.trim();
+    otherField.value = otherTicker;
+
+    if (wasEmpty) {
+      const otherLabel = otherField.closest('label');
+      if (otherLabel) {
+        const existing = otherLabel.querySelector('.auto-match-note');
+        if (existing) existing.remove();
+        const matchNote = document.createElement('small');
+        matchNote.className = 'auto-match-note';
+        matchNote.textContent = `ⓘ Auto-matched from ${enteredTicker}`;
+        otherLabel.appendChild(matchNote);
+      }
+    }
+
+    await priceFetcher.autoFetch(otherTicker, otherSide);
+  }
+
+  // Always fetch FX for the pair's known currency
+  await fxFetcher.autoFetch(pair.currency, 'USD');
+  await loadFXHistory();
+
+  updateView();
+}
+
+function renderAdrBadge(ticker) {
+  const tickerLabel = document.querySelector('#adrTicker')?.closest('label');
+  if (!tickerLabel) return;
+
+  const existing = tickerLabel.querySelector('.adr-badge-wrapper');
+  if (existing) existing.remove();
+
+  const entry = adrRegistry[ticker.toUpperCase()];
+  if (!entry) return;
+
+  // Look up depositary from knownPairs
+  const pairKey = tickerIndex[ticker.toUpperCase()];
+  const pair = pairKey ? knownPairs[pairKey] : null;
+  const depositary = pair?.depositary || entry.depositary || '';
+
+  const levelText = entry.level === 'I' ? 'Level I · OTC' :
+                    entry.level === 'II' ? `Level II · ${entry.market}` :
+                    `Level III · ${entry.market}`;
+  const sponsoredText = entry.sponsored ? ' · Sponsored' : ' · Unsponsored';
+  const depositaryText = depositary && depositary !== 'None' && depositary !== 'Multiple' ? ` · ${depositary}` : '';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'adr-badge-wrapper';
+
+  const badge = document.createElement('span');
+  badge.className = 'adr-badge';
+  badge.dataset.level = entry.level;
+  badge.dataset.sponsored = String(entry.sponsored);
+  badge.setAttribute('aria-label', 'ADR level info — hover for details');
+  badge.textContent = levelText + sponsoredText + depositaryText;
+
+  // Tooltip: structured rows per scenario
+  const tooltip = document.createElement('div');
+  tooltip.className = 'badge-tooltip';
+  const lvl = levelTooltips[entry.level];
+
+  const rows = [];
+  // Row 1: Level title + detail
+  rows.push(`<div class="tt-row tt-title">${lvl.title}</div>`);
+  rows.push(`<div class="tt-row tt-detail">${lvl.detail}</div>`);
+  // Row 2: Sponsorship
+  if (entry.sponsored) {
+    rows.push(`<div class="tt-meta"><span class="tt-label">Sponsored</span> Issuer-backed, formal SEC registration.</div>`);
+  } else {
+    rows.push(`<div class="tt-meta tt-warn"><span class="tt-label">Unsponsored</span> No issuer involvement — higher termination risk.</div>`);
+  }
+  // Row 3: Depositary (if known)
+  if (depositary && depositary !== 'None' && depositary !== 'Multiple') {
+    rows.push(`<div class="tt-meta"><span class="tt-label">Depositary</span> ${depositary}</div>`);
+  }
+  if (pair?.alternatives?.length) {
+    rows.push(`<div class="tt-meta"><span class="tt-label">Other Tickers</span> ${pair.alternatives.join(', ')}</div>`);
+  }
+  tooltip.innerHTML = rows.join('');
+
+  wrapper.appendChild(badge);
+  wrapper.appendChild(tooltip);
+
+  if (entry.warning) {
+    const warn = document.createElement('span');
+    warn.className = 'badge-warning';
+    warn.textContent = entry.warning;
+    wrapper.appendChild(warn);
+  }
+
+  // Insert inside the label span so it stays in the same grid row
+  const labelSpan = tickerLabel.querySelector('span');
+  if (labelSpan) {
+    labelSpan.appendChild(wrapper);
+  } else {
+    tickerLabel.prepend(wrapper);
+  }
+}
+
 const form = document.querySelector("#calculatorForm");
 const fields = Array.from(form.elements).filter((field) => field.name);
-const storageKey = "adr-local-comparator-inputs-v7";
+const storageKey = "adr-local-comparator-inputs-v8";
 const suggestionCache = {
   adr: new Map(),
   local: new Map()
@@ -292,36 +514,19 @@ const currencyNames = {
   ILA: "Israeli Agorot"
 };
 
-// Currency subunits that need conversion to main currency
-// These are subunit codes that APIs return (case-sensitive detection)
 const currencySubunits = {
-  'GBp': { mainCurrency: 'GBP', divisor: 100 },  // British Pence -> Pounds
-  'GBX': { mainCurrency: 'GBP', divisor: 100 },  // British Pence (alternative) -> Pounds
-  'ZAc': { mainCurrency: 'ZAR', divisor: 100 },  // South African Cents -> Rand
-  'ILA': { mainCurrency: 'ILS', divisor: 100 }   // Israeli Agorot -> Shekel
+  'GBp': { mainCurrency: 'GBP', divisor: 100 },
+  'GBX': { mainCurrency: 'GBP', divisor: 100 },
+  'ZAc': { mainCurrency: 'ZAR', divisor: 100 },
+  'ILA': { mainCurrency: 'ILS', divisor: 100 }
 };
 
-// Helper function to normalize currency and price
 function normalizeCurrencyAndPrice(currency, price) {
-  // Check if this is a known subunit (case-sensitive check)
   const subunit = currencySubunits[currency];
-  
   if (subunit) {
-    // This is a subunit - convert to main currency
-    return {
-      currency: subunit.mainCurrency,
-      price: price / subunit.divisor,
-      wasConverted: true,
-      originalCurrency: currency
-    };
+    return { currency: subunit.mainCurrency, price: price / subunit.divisor, wasConverted: true, originalCurrency: currency };
   }
-  
-  // Not a subunit - return as-is with uppercase currency
-  return {
-    currency: currency.toUpperCase(),
-    price: price,
-    wasConverted: false
-  };
+  return { currency: currency.toUpperCase(), price: price, wasConverted: false };
 }
 
 const moneyUsd = new Intl.NumberFormat("en-US", {
@@ -330,9 +535,7 @@ const moneyUsd = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2
 });
 
-const numberFmt = new Intl.NumberFormat("en-US", {
-  maximumFractionDigits: 4
-});
+const numberFmt = new Intl.NumberFormat("en-US", { maximumFractionDigits: 4 });
 
 const fxFmt = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 6,
@@ -372,24 +575,11 @@ function writeInputs(values) {
   if (Object.hasOwn(values, "fxStatus")) document.querySelector("#fxLookupStatus").textContent = values.fxStatus;
 }
 
-function setFieldValue(id, value) {
-  const field = document.querySelector(`#${id}`);
-  field.value = Number.isFinite(value) ? Number(value.toFixed(6)) : 0;
-}
-
-function formatLocal(value, currency) {
-  return `${numberFmt.format(value)} ${currency || "local"}`;
-}
 
 function getCurrencyName(code) {
   return currencyNames[(code || "").trim().toUpperCase()] || "Unknown currency";
 }
 
-function pct(value) {
-  if (!Number.isFinite(value)) return "0.00%";
-  const sign = value < 0 ? "" : "";  // No sign for positive, keep minus for negative
-  return `${sign}${Math.abs(value * 100).toFixed(2)}%`;
-}
 
 function formatLookupTime() {
   return new Intl.DateTimeFormat("en-US", {
@@ -413,12 +603,14 @@ function formatSourceTime(timestamp) {
 function calculate(values) {
   const ratio = Math.max(values.ratio, 0);
   const localQuantity = Math.max(values.localQuantity, 0);
+  // ratio = ADR shares per 1 primary share
   const adrQuantity = localQuantity * ratio;
   const localToUsdRate = Math.max(values.localToUsdRate, 0);
 
   const adrGrossUsd = adrQuantity * Math.max(values.adrPrice, 0);
   const adrCommissionUsd = Math.max(values.adrCommission, 0);
-  const adrTotalUsd = adrGrossUsd + adrCommissionUsd;
+  const adrPassThroughFeeUsd = adrQuantity * Math.max(values.adrPassThroughFee, 0);
+  const adrTotalUsd = adrGrossUsd + adrCommissionUsd + adrPassThroughFeeUsd;
 
   const localGross = localQuantity * Math.max(values.localPrice, 0);
   const localCommission = Math.max(values.localCommission, 0);
@@ -426,7 +618,9 @@ function calculate(values) {
   const localTotalUsd = localTotal * localToUsdRate;
   const localCommissionUsd = localCommission * localToUsdRate;
 
-  const impliedAdrMid = ratio > 0 ? (Math.max(values.localPrice, 0) * localToUsdRate) / ratio : 0;
+  const impliedAdrMid = ratio > 0
+    ? (Math.max(values.localPrice, 0) * localToUsdRate) / ratio
+    : 0;
   const premium = impliedAdrMid > 0 ? Math.max(values.adrPrice, 0) / impliedAdrMid - 1 : 0;
   const difference = adrTotalUsd - localTotalUsd;
   const breakEvenFx = localTotal > 0 ? adrTotalUsd / localTotal : 0;
@@ -435,6 +629,7 @@ function calculate(values) {
     adrQuantity,
     adrGrossUsd,
     adrCommissionUsd,
+    adrPassThroughFeeUsd,
     adrTotalUsd,
     localQuantity,
     localGross,
@@ -458,81 +653,113 @@ function updateView() {
   const winner = tie ? "Tie" : primaryWins ? "Primary Listing" : "ADR";
   const cheaperBy = Math.abs(result.difference);
   const maxCost = Math.max(result.adrTotalUsd, result.localTotalUsd, 1);
-  const commissionDifference = result.adrCommissionUsd - result.localCommissionUsd;
   const fxDistance = values.localToUsdRate > 0 ? (result.breakEvenFx / values.localToUsdRate) - 1 : 0;
 
   document.querySelector("#winner").textContent = winner;
-  document.querySelector("#summaryLine").textContent = tie
-    ? "Both routes are effectively equal on these inputs."
-    : `${winner} is cheaper by ${moneyUsd.format(cheaperBy)}.`;
+
+  // TASK 7 — summaryLine format
+  if (tie) {
+    document.querySelector("#summaryLine").textContent = "Both routes are effectively equal on these inputs.";
+  } else {
+    const loser = primaryWins ? "ADR" : "Primary Listing";
+    const savingPct = (cheaperBy / Math.max(result.adrTotalUsd, result.localTotalUsd) * 100).toFixed(2);
+    document.querySelector("#summaryLine").textContent = `Cheaper than ${loser} by ${moneyUsd.format(cheaperBy)} (${savingPct}%)`;
+  }
 
   document.querySelector("#localPriceLabel").textContent = `Price (${currency})`;
-  document.querySelector("#localCommissionLabel").textContent = `Commission (${currency})`;
+  document.querySelector("#localCommissionLabel").innerHTML = `Commission (${currency})<a class="comm-link" href="https://www.ibkr.com/commissions" target="_blank" rel="noopener noreferrer">IBKR&#8599;</a>`;
   document.querySelector("#fxRateLabel").textContent = `FX Rate (1 ${currency} = $)`;
   document.querySelector("#currencyName").textContent = getCurrencyName(currency);
   document.querySelector("#adrQuantityOut").textContent = numberFmt.format(result.adrQuantity);
 
   document.querySelector("#adrChartValue").textContent = moneyUsd.format(result.adrTotalUsd);
   document.querySelector("#localChartValue").textContent = moneyUsd.format(result.localTotalUsd);
-  
-  // Dynamic bar colors based on which is cheaper
+
   const adrBar = document.querySelector("#adrCostBar");
   const localBar = document.querySelector("#localCostBar");
-  
+
   if (result.adrTotalUsd < result.localTotalUsd) {
-    // ADR is cheaper - green for ADR, red for Primary
-    adrBar.className = 'bar-fill primary-fill'; // Use primary-fill (green) for cheaper
-    localBar.className = 'bar-fill adr-fill'; // Use adr-fill (red) for expensive
+    adrBar.className = 'bar-fill primary-fill';
+    localBar.className = 'bar-fill adr-fill';
   } else {
-    // Primary is cheaper - green for Primary, red for ADR
-    adrBar.className = 'bar-fill adr-fill'; // Use adr-fill (red) for expensive
-    localBar.className = 'bar-fill primary-fill'; // Use primary-fill (green) for cheaper
+    adrBar.className = 'bar-fill adr-fill';
+    localBar.className = 'bar-fill primary-fill';
   }
-  
+
   adrBar.style.width = `${Math.max((result.adrTotalUsd / maxCost) * 100, 2)}%`;
   localBar.style.width = `${Math.max((result.localTotalUsd / maxCost) * 100, 2)}%`;
 
-  // Update premium/discount label and value
-  const premiumLabel = document.querySelector("#premiumLabel");
-  const premiumValue = document.querySelector("#premium");
+  // ratioWarning: only set large-premium warning if not set by tryAutoPopulatePair (pair-sourced)
   const ratioWarning = document.querySelector("#ratioWarning");
-  
-  if (result.premium > 0) {
-    // ADR is more expensive - show as Premium
-    premiumLabel.textContent = "ADR Premium";
-    premiumValue.textContent = pct(result.premium);
-  } else if (result.premium < 0) {
-    // ADR is cheaper - show as Discount (with positive percentage)
-    premiumLabel.textContent = "ADR Discount";
-    premiumValue.textContent = pct(Math.abs(result.premium));
-  } else {
-    // Equal pricing
-    premiumLabel.textContent = "ADR Premium / Discount";
-    premiumValue.textContent = "0.00%";
-  }
-  
-  // Check if premium/discount is > 10% and show ratio warning
   const absPremium = Math.abs(result.premium);
-  if (absPremium > 0.10) {
-    ratioWarning.textContent = "⚠️ Large premium/discount detected. Please verify ratio is correct.";
-    ratioWarning.dataset.tone = 'warning';
-  } else {
-    ratioWarning.textContent = "";
-    delete ratioWarning.dataset.tone;
+  if (ratioWarning && ratioWarning.dataset.source !== 'pair') {
+    if (absPremium > 0.10) {
+      ratioWarning.textContent = "⚠️ Large premium/discount detected. Please verify ratio is correct.";
+      ratioWarning.dataset.tone = 'warning';
+    } else if (ratioWarning.dataset.tone === 'warning') {
+      ratioWarning.textContent = '';
+      delete ratioWarning.dataset.tone;
+    }
   }
-  
-  document.querySelector("#premiumDetail").textContent = `ADR price vs ${moneyUsd.format(result.impliedAdrMid)} primary equivalent`;
-  document.querySelector("#breakEvenFx").textContent = fxFmt.format(result.breakEvenFx);
-  
-  // Simplified FX insight text
-  // When FX rate needs to rise (positive fxDistance), the foreign currency strengthens
-  // When FX rate needs to drop (negative fxDistance), the foreign currency weakens
+  document.querySelector("#breakEvenFx").textContent = `${currency} / USD = ${fxFmt.format(result.breakEvenFx)}`;
+
+  // Cost breakdown card
+  const bdLocalQty = document.querySelector('#bdLocalQty');
+  if (bdLocalQty) {
+    const localCcy = currency;
+    const localNumFmt = new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 });
+    document.querySelector('#bdLocalQty').textContent = numberFmt.format(result.localQuantity);
+    document.querySelector('#bdLocalGross').textContent = `${localNumFmt.format(result.localGross)} ${localCcy}`;
+    document.querySelector('#bdLocalComm').textContent = `${localNumFmt.format(result.localCommission)} ${localCcy}`;
+    document.querySelector('#bdLocalFxLabel').textContent = `1 ${localCcy} = $`;
+    document.querySelector('#bdLocalFxRate').textContent = values.localToUsdRate ? Number(values.localToUsdRate).toFixed(6) : '—';
+    document.querySelector('#bdLocalTotal').textContent = moneyUsd.format(result.localTotalUsd);
+    document.querySelector('#bdAdrQty').textContent = numberFmt.format(result.adrQuantity);
+    document.querySelector('#bdAdrGross').textContent = moneyUsd.format(result.adrGrossUsd);
+    document.querySelector('#bdAdrComm').textContent = result.adrCommissionUsd > 0 ? moneyUsd.format(result.adrCommissionUsd) : '—';
+    document.querySelector('#bdAdrFee').textContent = result.adrPassThroughFeeUsd > 0 ? moneyUsd.format(result.adrPassThroughFeeUsd) + '/yr' : '—';
+    document.querySelector('#bdAdrTotal').textContent = moneyUsd.format(result.adrTotalUsd);
+  }
+
   const absFxDistance = Math.abs(fxDistance);
-  const currencyStrengthDirection = fxDistance > 0 ? "strengthen" : "weaken";
-  
-  const fxInsightText = `${currency} needs to ${currencyStrengthDirection} against USD by at least ${pct(absFxDistance)}.`;
-  
-  document.querySelector("#fxInsight").textContent = fxInsightText;
+  // fxDistance > 0: BEV > current rate → primary currently cheaper → EUR must strengthen (rise) to cross BEV for ADR to compete
+  // fxDistance < 0: BEV < current rate → ADR currently cheaper → EUR must weaken (fall) to cross BEV for primary to compete
+  const direction = fxDistance > 0 ? "strengthen" : "weaken";
+  const distancePct = `${(absFxDistance * 100).toFixed(2)}%`;
+  document.querySelector("#fxInsight").textContent =
+    `${currency} needs to ${direction} against USD by at least ${distancePct}`;
+
+  // TASK 5 — ADR commission auto-fill ($0.10/share); primary stays $0
+  const autoAdrComm = calculateAdrCommission(result.adrQuantity);
+  const adrCommField = document.querySelector('#adrCommission');
+  const localCommField = document.querySelector('#localCommission');
+  const adrCommNote = document.querySelector('#adrCommissionNote');
+  const localCommNote = document.querySelector('#localCommissionNote');
+
+  if (!ibkrAdrOverridden) {
+    const currentVal = parseFloat(adrCommField.value) || 0;
+    if (currentVal === 0 || currentVal === lastIbkrAdrCommission) {
+      adrCommField.value = autoAdrComm.toFixed(2);
+      lastIbkrAdrCommission = autoAdrComm;
+    }
+  }
+
+  if (!ibkrLocalOverridden) {
+    localCommField.value = '0';
+    if (localCommNote) localCommNote.innerHTML = '';
+  }
+
+  // TASK 12 — Withholding tax callout
+  const info = withholdingInfo[currency];
+  const withholdingEl = document.querySelector('#withholdingCallout');
+  if (withholdingEl) {
+    if (info) {
+      document.querySelector('#withholdingNote').textContent = `${currency}: ${info.rate} — ${info.note}`;
+      withholdingEl.style.display = 'block';
+    } else {
+      withholdingEl.style.display = 'none';
+    }
+  }
 
   localStorage.setItem(storageKey, JSON.stringify(values));
 }
@@ -574,7 +801,6 @@ async function fetchJson(url) {
         reject(new Error(`HTTP ${request.status}`));
         return;
       }
-
       try {
         resolve(JSON.parse(request.responseText));
       } catch (error) {
@@ -603,34 +829,31 @@ function renderSuggestions(side, quotes) {
     button.type = "button";
     button.className = "suggestion-option";
     button.setAttribute("role", "option");
-    
-    // Build display with exchange name
+
     const exchangeInfo = quote.venue ? ` • ${quote.venue}` : '';
     button.innerHTML = `<strong>${quote.symbol}</strong><span>${quote.name}${exchangeInfo}</span>`;
-    
+
     button.addEventListener("click", async () => {
       document.querySelector(`#${side}Ticker`).value = quote.symbol;
-      
-      // Show name and exchange
+
       const nameEl = document.querySelector(`#${side}Name`);
       nameEl.textContent = `${quote.name}${exchangeInfo}`;
-      
-      // Auto-fetch price when ticker is selected
+
       if (side === 'adr') {
         await priceFetcher.autoFetch(quote.symbol, 'adr');
+        renderAdrBadge(quote.symbol);
       } else {
         const result = await priceFetcher.autoFetch(quote.symbol, 'local');
-        
-        // Auto-populate currency and fetch FX
         if (result.success && result.currency) {
           fieldManager.updateAndLock('localCurrency', result.currency);
           document.querySelector("#currencyName").textContent = getCurrencyName(result.currency);
-          
           await fxFetcher.autoFetch(result.currency, 'USD');
           await loadFXHistory();
         }
       }
-      
+
+      await tryAutoPopulatePair(quote.symbol, side);
+
       hideSuggestions(side);
       updateView();
     });
@@ -648,17 +871,14 @@ async function searchTickers(side, query) {
   try {
     const data = await fetchJson(`/api/search?q=${encodeURIComponent(trimmed)}`);
     let quotes = (data.quotes || []).filter((quote) => quote.symbol).map(normalizeQuote);
-    
-    // Filter by exchange
-    const usExchanges = ['NYSE', 'NASDAQ', 'AMEX', 'NYQ', 'NMS', 'NGM', 'NCM', 'PNK'];
+
+    const usExchanges = ['NYSE', 'NASDAQ', 'AMEX', 'NYQ', 'NMS', 'NGM', 'NCM', 'PNK', 'OTC', 'OTCBB', 'OTCMKTS'];
     if (side === 'adr') {
-      // ADR field: only US exchanges (including Pink Sheets/OTC)
       quotes = quotes.filter(q => usExchanges.includes(q.venue.toUpperCase()));
     } else {
-      // Primary listing: exclude US exchanges
       quotes = quotes.filter(q => !usExchanges.includes(q.venue.toUpperCase()));
     }
-    
+
     renderSuggestions(side, quotes);
   } catch {
     setLookupStatus(side, "Search unavailable", "bad");
@@ -739,29 +959,57 @@ function queueTickerSearch(side) {
   }, 250);
 }
 
+document.querySelector('#adrCommission').addEventListener('focus', () => {
+  ibkrAdrOverridden = true;
+});
+document.querySelector('#adrCommission').addEventListener('input', () => {
+  const val = document.querySelector('#adrCommission').value;
+  if (val === '') {
+    ibkrAdrOverridden = false;
+    lastIbkrAdrCommission = null;
+  }
+});
+document.querySelector('#localCommission').addEventListener('focus', () => {
+  ibkrLocalOverridden = true;
+});
+document.querySelector('#localCommission').addEventListener('input', () => {
+  const val = document.querySelector('#localCommission').value;
+  if (val === '') {
+    ibkrLocalOverridden = false;
+    lastIbkrLocalCommission = null;
+  }
+});
+
 form.addEventListener("input", (event) => {
   if (event.target.id === "adrTicker") queueTickerSearch("adr");
   if (event.target.id === "localTicker") queueTickerSearch("local");
   updateView();
-  
-  // Reload FX chart when values that affect breakeven change
+
   if (['localQuantity', 'ratio', 'adrPrice', 'localPrice', 'adrCommission', 'localCommission', 'localToUsdRate'].includes(event.target.id)) {
     const currency = document.querySelector("#localCurrency").value.trim();
-    if (currency && currency !== 'USD') {
-      loadFXHistory();
-    }
+    if (currency && currency !== 'USD') loadFXHistory();
   }
 });
 
 form.addEventListener("change", async (event) => {
-  if (event.target.id === "adrTicker") updateTickerMetadata("adr");
-  if (event.target.id === "localTicker") updateTickerMetadata("local");
+  if (event.target.id === "adrTicker") {
+    updateTickerMetadata("adr");
+    const ticker = event.target.value.trim();
+    if (ticker.length > 2) {
+      renderAdrBadge(ticker);
+      await tryAutoPopulatePair(ticker, 'adr');
+    }
+  }
+  if (event.target.id === "localTicker") {
+    updateTickerMetadata("local");
+    const ticker = event.target.value.trim();
+    if (ticker.length > 2) await tryAutoPopulatePair(ticker, 'local');
+  }
   if (event.target.id === "localCurrency") {
-    // Auto-fetch FX when currency changes
     const currency = event.target.value.trim();
     if (currency) {
       await fxFetcher.autoFetch(currency, 'USD');
-      await loadFXHistory(); // Load FX history when currency changes
+      await loadFXHistory();
     }
   }
   updateView();
@@ -774,21 +1022,26 @@ document.addEventListener("click", (event) => {
   }
 });
 
-// Refresh button - refetch all data
 document.querySelector("#refreshButton").addEventListener("click", async () => {
   const adrTicker = document.querySelector("#adrTicker").value.trim();
   const localTicker = document.querySelector("#localTicker").value.trim();
   const currency = document.querySelector("#localCurrency").value.trim();
-  
+
   if (!adrTicker || !localTicker) {
-    alert("Please enter both tickers before refreshing");
+    const flashError = (id) => {
+      const el = document.querySelector(`#${id}`);
+      el.classList.add('input-error');
+      setTimeout(() => el.classList.remove('input-error'), 1500);
+    };
+    flashError('adrTicker');
+    flashError('localTicker');
     return;
   }
-  
+
   const button = document.querySelector("#refreshButton");
   button.disabled = true;
-  button.textContent = "Refreshing...";
-  
+  button.textContent = "Updating...";
+
   try {
     await Promise.all([
       priceFetcher.refresh(adrTicker, 'adr'),
@@ -798,205 +1051,249 @@ document.querySelector("#refreshButton").addEventListener("click", async () => {
     updateView();
   } finally {
     button.disabled = false;
-    button.innerHTML = '<span class="icon">↻</span> Refresh';
+    button.innerHTML = '<span class="icon">↻</span> Update Prices';
   }
-});
-
-// Reset button - clear all inputs
-document.querySelector("#resetButton").addEventListener("click", () => {
-  if (!confirm("Clear all inputs and reset the calculator?")) {
-    return;
-  }
-  
-  // Clear all input fields
-  document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
-    if (input.id !== 'adrQuantityOut') {
-      input.value = '';
-      input.removeAttribute('readonly');
-    }
-  });
-  
-  // Clear all status messages
-  document.querySelectorAll('.lookup-status, .security-name').forEach(el => {
-    el.textContent = '';
-    delete el.dataset.tone;
-  });
-  
-  // Clear localStorage
-  localStorage.removeItem(storageKey);
-  
-  // Reset analysis
-  updateView();
 });
 
 // ADR Ratio search helper
 document.querySelector("#ratioSearchButton").addEventListener("click", () => {
   const adrTicker = document.querySelector("#adrTicker").value.trim();
   const localTicker = document.querySelector("#localTicker").value.trim();
-  
+
   if (!adrTicker || !localTicker) {
-    alert("Please enter both tickers first");
+    const flashError = (id) => {
+      const el = document.querySelector(`#${id}`);
+      el.classList.add('input-error');
+      setTimeout(() => el.classList.remove('input-error'), 1500);
+    };
+    flashError('adrTicker');
+    flashError('localTicker');
     return;
   }
-  
-  const query = `what is the primary listing to ADR ratio for ${localTicker} and ${adrTicker}`;
+
+  const query = `how many shares of ${adrTicker} ADR per a share of ${localTicker} primary listing`;
   window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
 });
 
 // FX Projections search helper
 document.querySelector("#fxProjectionsButton").addEventListener("click", () => {
   const currency = document.querySelector("#localCurrency").value.trim();
-  
+
   if (!currency) {
-    alert("Please enter a currency first");
+    const el = document.querySelector('#localCurrency');
+    el.classList.add('input-error');
+    setTimeout(() => el.classList.remove('input-error'), 1500);
     return;
   }
-  
-  const query = `${currency} to USD forecast`;
+
+  const query = `${currency} to dollar forecast for next 6-12 months`;
   window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
 });
 
-// Sparkline renderer with breakeven line
+document.querySelector("#shareButton").addEventListener("click", async () => {
+  const fullUrl = window.location.origin + encodeStateToUrl();
+  const adr = document.querySelector('#adrTicker').value.trim();
+  const primary = document.querySelector('#localTicker').value.trim();
+  const title = adr && primary ? `Stock Lens — ${adr} vs ${primary}` : 'Stock Lens';
+  const btn = document.querySelector("#shareButton");
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, text: 'Compare ADR vs primary listing cost', url: fullUrl });
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        navigator.clipboard.writeText(fullUrl);
+      }
+    }
+  } else {
+    navigator.clipboard.writeText(fullUrl).then(() => {
+      btn.innerHTML = '<span class="icon">✓</span> Copied!';
+      setTimeout(() => { btn.innerHTML = '<span class="icon">⎘</span> Share'; }, 1500);
+    });
+  }
+});
+
+function encodeStateToUrl() {
+  const params = new URLSearchParams({
+    adr: document.querySelector('#adrTicker').value.trim(),
+    primary: document.querySelector('#localTicker').value.trim(),
+    ratio: document.querySelector('#ratio').value,
+    qty: document.querySelector('#localQuantity').value,
+    adrFee: document.querySelector('#adrPassThroughFee').value,
+    adrComm: document.querySelector('#adrCommission').value,
+    localComm: document.querySelector('#localCommission').value,
+  });
+  return window.location.pathname + '?' + params.toString();
+}
+
 function renderSparkline(data, breakEvenRate, currency) {
   const canvas = document.querySelector("#fxSparkline");
-  
-  if (!canvas) {
-    return;
-  }
-  
-  if (!data || data.length === 0) {
-    return;
-  }
-  
+  if (!canvas || !data || data.length === 0) return;
+
+  const container = canvas.parentElement;
+  canvas.width = container.clientWidth || 280;
+  canvas.height = 120;
+
   const ctx = canvas.getContext('2d');
   const width = canvas.width;
   const height = canvas.height;
   const padding = 8;
-  
-  // Clear canvas
+
   ctx.clearRect(0, 0, width, height);
-  
-  // Extract rates
+
   const rates = data.map(d => d.rate);
   const currentRate = rates[rates.length - 1];
-  
-  // Include breakeven in range calculation if provided
+
   const allValues = breakEvenRate && Number.isFinite(breakEvenRate) ? [...rates, breakEvenRate] : rates;
   const minRate = Math.min(...allValues);
   const maxRate = Math.max(...allValues);
   const range = maxRate - minRate || 1;
-  
-  // Helper to convert rate to Y coordinate
+
   const rateToY = (rate) => height - padding - ((rate - minRate) / range) * (height - 2 * padding);
-  
-  // Draw breakeven line if provided
+
   if (breakEvenRate && Number.isFinite(breakEvenRate)) {
     const breakEvenY = rateToY(breakEvenRate);
-    
-    // Measure "BEV" text width to create gap in dashed line
+
     ctx.font = 'bold 11px system-ui, -apple-system, sans-serif';
     const bevText = 'BEV';
-    const bevWidth = ctx.measureText(bevText).width;
-    const bevLeftMargin = 2; // Small margin from container edge
-    const gapEnd = bevLeftMargin + bevWidth + 4;
-    
-    // Draw dashed line with gap for "BEV" label
+    const bevLeftMargin = 2;
+    const gapEnd = bevLeftMargin + ctx.measureText(bevText).width + 4;
+
     ctx.beginPath();
-    ctx.strokeStyle = '#374151'; // Neutral gray color
+    ctx.strokeStyle = '#a09880';
     ctx.lineWidth = 1;
     ctx.setLineDash([4, 4]);
-    
-    // Draw line from gap end to right edge
     ctx.moveTo(gapEnd, breakEvenY);
     ctx.lineTo(width - padding, breakEvenY);
     ctx.stroke();
     ctx.setLineDash([]);
-    
-    // Draw "BEV" label at the left edge of container
-    ctx.fillStyle = '#374151';
+
+    ctx.fillStyle = '#a09880';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     ctx.fillText(bevText, bevLeftMargin, breakEvenY);
-    
-    // Update HTML labels for top and bottom zones
+
     const topLabel = document.querySelector('.sparkline-label-top');
     const bottomLabel = document.querySelector('.sparkline-label-bottom');
-    
+
     if (topLabel && bottomLabel) {
-      if (currentRate > breakEvenRate) {
-        // Current rate is above breakeven
-        topLabel.textContent = 'Buy ADR';
-        bottomLabel.textContent = 'Buy Primary';
-      } else {
-        // Current rate is below breakeven
-        topLabel.textContent = 'Buy Primary';
-        bottomLabel.textContent = 'Buy ADR';
+      // Top = high FX rates = above BEV = ADR cheaper. Always fixed.
+      topLabel.textContent = 'Buy ADR';
+      bottomLabel.textContent = 'Buy Primary';
+
+      const zoneNote = document.querySelector('.sparkline-zone-note');
+      if (zoneNote) {
+        zoneNote.textContent = `When ${currency}/USD is above the BEV line, ADR is cheaper. Below it, Primary is cheaper.`;
       }
     }
   }
-  
-  // Draw historical line
+
   ctx.beginPath();
-  ctx.strokeStyle = '#0f766e';
+  ctx.strokeStyle = '#C9A840';
   ctx.lineWidth = 2;
-  
+
   data.forEach((d, i) => {
     const x = (i / (data.length - 1)) * (width - 2 * padding) + padding;
     const y = rateToY(d.rate);
-    
-    if (i === 0) {
-      ctx.moveTo(x, y);
-    } else {
-      ctx.lineTo(x, y);
-    }
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
   });
-  
+
   ctx.stroke();
-  
-  // Draw current rate marker
+
   const lastX = width - padding;
   const lastY = rateToY(currentRate);
   ctx.beginPath();
-  ctx.fillStyle = '#0f766e';
+  ctx.fillStyle = '#C9A840';
   ctx.arc(lastX, lastY, 3, 0, 2 * Math.PI);
   ctx.fill();
-  
-  // Update chart label with currency pair
+
   const labelEl = document.querySelector('.sparkline-label');
   if (labelEl && currency) {
-    labelEl.textContent = `6-month FX rate history (${currency} to USD)`;
+    labelEl.textContent = `6-month FX rate history for ${currency} / USD`;
   }
 }
 
-// Load FX history on currency change
 async function loadFXHistory() {
   const currency = document.querySelector("#localCurrency").value.trim();
-  
-  if (!currency || currency === 'USD') {
-    return;
-  }
-  
+  if (!currency || currency === 'USD') return;
+
   const result = await fxFetcher.fetchHistory(currency, 'USD');
-  
   if (result.success && result.data.length > 0) {
     const values = readInputs();
     const calc = calculate(values);
-    
     renderSparkline(result.data, calc.breakEvenFx, currency);
   }
 }
 
-writeInputs({ ...defaults, ...getSavedInputs() });
-document.querySelector("#adrQuantityOut").classList.add("computed-output");
-populateCurrencies();
-updateView();
-
-// Load FX history on page load if currency is set
-window.addEventListener('load', () => {
-  const initialCurrency = document.querySelector("#localCurrency").value.trim();
-  if (initialCurrency && initialCurrency !== 'USD') {
-    setTimeout(() => {
+let resizeDebounceTimer = null;
+let lastWindowWidth = window.innerWidth;
+window.addEventListener('resize', () => {
+  const currentWidth = window.innerWidth;
+  if (Math.abs(currentWidth - lastWindowWidth) > 20) {
+    clearTimeout(resizeDebounceTimer);
+    resizeDebounceTimer = setTimeout(() => {
+      lastWindowWidth = currentWidth;
       loadFXHistory();
     }, 200);
   }
 });
+
+// Initialise
+writeInputs({ ...defaults, ...getSavedInputs() });
+document.querySelector("#adrQuantityOut").classList.add("computed-output");
+populateCurrencies();
+// Trigger auto-populate and price fetch for default/saved tickers on load (skip if URL params present)
+const _hasUrlParams = new URLSearchParams(window.location.search).has('adr');
+if (!_hasUrlParams) {
+  (async () => {
+    const adr = document.querySelector('#adrTicker').value.trim();
+    const primary = document.querySelector('#localTicker').value.trim();
+    if (adr && primary) {
+      await Promise.all([
+        priceFetcher.autoFetch(adr, 'adr'),
+        priceFetcher.autoFetch(primary, 'local'),
+      ]);
+      await tryAutoPopulatePair(adr, 'adr');
+      renderAdrBadge(adr);
+      const currency = document.querySelector('#localCurrency').value.trim();
+      if (currency && currency !== 'USD') await loadFXHistory();
+      updateView();
+    }
+  })();
+}
+
+(async () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('adr') && params.has('primary')) {
+    document.querySelector('#adrTicker').value = params.get('adr');
+    document.querySelector('#localTicker').value = params.get('primary');
+    if (params.has('ratio')) document.querySelector('#ratio').value = params.get('ratio');
+    if (params.has('qty')) document.querySelector('#localQuantity').value = params.get('qty');
+    if (params.has('adrFee')) document.querySelector('#adrPassThroughFee').value = params.get('adrFee');
+    if (params.has('adrComm')) {
+      document.querySelector('#adrCommission').value = params.get('adrComm');
+      ibkrAdrOverridden = true;
+    }
+    if (params.has('localComm')) {
+      document.querySelector('#localCommission').value = params.get('localComm');
+      ibkrLocalOverridden = true;
+    }
+    await Promise.all([
+      priceFetcher.autoFetch(params.get('adr'), 'adr'),
+      priceFetcher.autoFetch(params.get('primary'), 'local'),
+    ]);
+    // tryAutoPopulatePair sets the correct currency/name from knownPairs (more reliable than API response)
+    await tryAutoPopulatePair(params.get('adr'), 'adr');
+    renderAdrBadge(params.get('adr'));
+    const currency = document.querySelector('#localCurrency').value.trim();
+    if (currency) {
+      await fxFetcher.autoFetch(currency, 'USD');
+      await loadFXHistory();
+    }
+    updateView();
+  } else {
+    updateView();
+  }
+})();
+
