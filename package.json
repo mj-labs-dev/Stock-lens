@@ -4,6 +4,7 @@
   "private": true,
   "description": "Compare ADR purchase cost against primary listing purchase cost.",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "vercel dev"
   }
 }

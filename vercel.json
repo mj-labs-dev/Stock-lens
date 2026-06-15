@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/twelve-data/price", "destination": "/api/twelve-data/price" },
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ]
+}
