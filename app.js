@@ -753,6 +753,9 @@ function updateView() {
     }
   }
   document.querySelector("#breakEvenFx").textContent = `${currency} / USD = ${fxFmt.format(result.breakEvenFx)}`;
+  document.querySelector("#breakEvenLabel").textContent = primaryWins
+    ? `Break-even FX for ADR to be cheaper`
+    : `Break-even FX for Primary to be cheaper`;
 
   // Cost breakdown card
   const bdLocalQty = document.querySelector('#bdLocalQty');
