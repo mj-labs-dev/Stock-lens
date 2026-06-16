@@ -82,9 +82,10 @@
                       </label>
 
                       <label class="field span-2">
-                        <span id="fxRateLabel">FX Rate (1 JPY = $)</span>
+                        <span id="fxRateLabel">FX Rate (1 JPY = USD)</span>
                         <input id="localToUsdRate" name="localToUsdRate" type="number" min="0" step="0.000001" value="0.00638" inputmode="decimal" aria-label="1 primary listing currency equals USD" readonly>
                         <small class="lookup-status" id="fxLookupStatus" role="status"></small>
+                        <small class="security-name" id="currencyName"></small>
                       </label>
 
                       <!-- Currency kept hidden — JS reads #localCurrency in many places -->
@@ -92,7 +93,6 @@
                         <span>Currency</span>
                         <input id="localCurrency" name="localCurrency" type="text" value="JPY" maxlength="8" list="currencySuggestions" autocomplete="off" aria-label="Primary listing currency" readonly>
                         <datalist id="currencySuggestions"></datalist>
-                        <small class="security-name" id="currencyName"></small>
                       </label>
                     </div>
                   </article>
@@ -121,7 +121,7 @@
                       </label>
 
                       <label class="field span-2">
-                        <span>ADR Fee ($/share/yr)</span>
+                        <span>ADR Fee (USD/share/yr)</span>
                         <input id="adrPassThroughFee" name="adrPassThroughFee" type="number" min="0" step="0.001" value="0.03" inputmode="decimal" aria-label="ADR depositary pass-through fee">
                         <small class="field-note">Custodial fee charged by depositary bank. Typically $0.01–$0.03/share/yr, deducted from dividends.</small>
                       </label>
@@ -168,7 +168,7 @@
                     <div class="breakdown-row"><span>Shares</span><span id="bdLocalQty">—</span></div>
                     <div class="breakdown-row"><span>Gross cost (shares x price)</span><span id="bdLocalGross">—</span></div>
                     <div class="breakdown-row"><span>Commission</span><span id="bdLocalComm">—</span></div>
-                    <div class="breakdown-row"><span id="bdLocalFxLabel">1 JPY = $</span><span id="bdLocalFxRate">—</span></div>
+                    <div class="breakdown-row"><span id="bdLocalFxLabel">1 JPY = USD</span><span id="bdLocalFxRate">—</span></div>
                     <div class="breakdown-row breakdown-total"><span>Total (USD)</span><span id="bdLocalTotal">—</span></div>
                   </div>
                   <div class="breakdown-col">

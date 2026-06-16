@@ -139,7 +139,12 @@ async function serveStatic(req, res) {
   }
 
   try {
-    const body = await fs.readFile(filePath);
+    let body = await fs.readFile(filePath);
+    if (path.extname(filePath) === ".html") {
+      body = body.toString()
+        .replace(/https:\/\/stock-lens-beta\.vercel\.app\/app\.js/g, "/app.js")
+        .replace(/https:\/\/stock-lens-beta\.vercel\.app\/styles\.css/g, "/styles.css");
+    }
     send(res, 200, body, contentTypes[path.extname(filePath)] || "application/octet-stream");
   } catch {
     send(res, 404, "Not found", "text/plain; charset=utf-8");

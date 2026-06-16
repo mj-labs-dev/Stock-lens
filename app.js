@@ -16,45 +16,44 @@ const defaults = {
 };
 
 const knownPairs = {
-  'TM:7203.T':       { ratio:0.1,              adr:'TM',     primary:'7203.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'BNY Mellon',    name:'Toyota Motor' },
-  'HMC:7267.T':      { ratio:0.1,              adr:'HMC',    primary:'7267.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Honda Motor' },
-  'SONY:6758.T':     { ratio:1,                adr:'SONY',   primary:'6758.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Sony Group' },
-  'MUFG:8306.T':     { ratio:1,                adr:'MUFG',   primary:'8306.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Mitsubishi UFJ Financial' },
-  'SMFG:8316.T':     { ratio:1,                adr:'SMFG',   primary:'8316.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Citibank',      name:'Sumitomo Mitsui Financial' },
-  'MFG:8411.T':      { ratio:1,                adr:'MFG',    primary:'8411.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Mizuho Financial' },
-  'NTDOY:7974.T':    { ratio:1,                adr:'NTDOY',  primary:'7974.T',       currency:'JPY', exchange:'TSE',                level:'I',   market:'OTC',     sponsored:true,  depositary:'JPMorgan',      name:'Nintendo',                  note:'Level I OTC — wider spreads than exchange-listed ADRs.' },
-  'GSK:GSK.L':       { ratio:2,                adr:'GSK',    primary:'GSK.L',        currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'GSK plc' },
-  'UL:ULVR.L':       { ratio:1,                adr:'UL',     primary:'ULVR.L',       currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'Unilever',                  alternatives:['UNLYF'] },
-  'BP:BP.L':         { ratio:2,                adr:'BP',     primary:'BP.L',         currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'BP plc',                    alternatives:['BPAQF'] },
-  'AZN:AZN.L':       { ratio:1,                adr:'AZN',    primary:'AZN.L',        currency:'GBP', exchange:'LSE',                level:'II',  market:'NASDAQ',  sponsored:true,  depositary:'JPMorgan',      name:'AstraZeneca' },
-  'RIO:RIO.L':       { ratio:1,                adr:'RIO',    primary:'RIO.L',        currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Rio Tinto',                 alternatives:['RTNTF'] },
-  'SHEL:SHEL.L':     { ratio:5,                adr:'SHEL',   primary:'SHEL.L',       currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Shell plc',                 alternatives:['SHLLF'] },
-  'HSBC:0005.HK':    { ratio:1,                adr:'HSBC',   primary:'0005.HK',      currency:'HKD', exchange:'HKEX',               level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'HSBC Holdings',             note:'Also listed on LSE as HSBA.L.' },
-  'ASML:ASML.AS':    { ratio:1,                adr:'ASML',   primary:'ASML.AS',      currency:'EUR', exchange:'Euronext Amsterdam', level:'II',  market:'NASDAQ',  sponsored:true,  depositary:'Citibank',      name:'ASML Holding' },
-  'PHG:PHIA.AS':     { ratio:1,                adr:'PHG',    primary:'PHIA.AS',      currency:'EUR', exchange:'Euronext Amsterdam', level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Philips' },
-  'EADSY:AIR.PA':    { ratio:4,                adr:'EADSY',  primary:'AIR.PA',       currency:'EUR', exchange:'Euronext Paris',     level:'I',   market:'OTC',     sponsored:false, depositary:'Multiple',      name:'Airbus SE',                 note:'Unsponsored OTC ADR. Consider buying AIR.PA directly on Euronext for tighter spreads.' },
-  'SNY:SAN.PA':      { ratio:2,                adr:'SNY',    primary:'SAN.PA',       currency:'EUR', exchange:'Euronext Paris',     level:'III', market:'NASDAQ',  sponsored:true,  depositary:'BNY Mellon',    name:'Sanofi' },
-  'LVMUY:MC.PA':     { ratio:5,                adr:'LVMUY',  primary:'MC.PA',        currency:'EUR', exchange:'Euronext Paris',     level:'I',   market:'OTC',     sponsored:true,  depositary:'BNY Mellon',    name:'LVMH' },
-  'TTEHY:TTE.PA':    { ratio:2,                adr:'TTEHY',  primary:'TTE.PA',       currency:'EUR', exchange:'Euronext Paris',     level:'I',   market:'OTC',     sponsored:true,  depositary:'JPMorgan',      name:'TotalEnergies' },
-  'SAP:SAP.DE':      { ratio:1,                adr:'SAP',    primary:'SAP.DE',       currency:'EUR', exchange:'XETRA',              level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'SAP SE' },
-  'SIEGY:SIE.DE':    { ratio:2,                adr:'SIEGY',  primary:'SIE.DE',       currency:'EUR', exchange:'XETRA',              level:'I',   market:'OTC',     sponsored:true,  depositary:'JPMorgan',      name:'Siemens AG' },
-  'BMWYY:BMW.DE':    { ratio:5,                adr:'BMWYY',  primary:'BMW.DE',       currency:'EUR', exchange:'XETRA',              level:'I',   market:'OTC',     sponsored:true,  depositary:'Citibank',      name:'BMW AG' },
-  'NVS:NOVN.SW':     { ratio:1,                adr:'NVS',    primary:'NOVN.SW',      currency:'CHF', exchange:'SIX',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Novartis' },
-  'RHHBY:ROG.SW':    { ratio:1,                adr:'RHHBY',  primary:'ROG.SW',       currency:'CHF', exchange:'SIX',                level:'I',   market:'OTC',     sponsored:true,  depositary:'JPMorgan',      name:'Roche Holding',             note:'RHHBY = non-voting bearer shares. RHHVF = voting registered shares — different share classes with different ratios.',  alternatives:['RHHVF'] },
-  'NSRGY:NESN.SW':   { ratio:1,                adr:'NSRGY',  primary:'NESN.SW',      currency:'CHF', exchange:'SIX',                level:'I',   market:'OTC',     sponsored:true,  depositary:'Citibank',      name:'Nestlé',                    note:'Level I OTC. Consider buying NESN.SW directly via IBKR for tighter spreads.' },
-  'NVO:NOVO-B.CO':   { ratio:1,                adr:'NVO',    primary:'NOVO-B.CO',    currency:'DKK', exchange:'Nasdaq Copenhagen', level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Novo Nordisk' },
-  'TSM:2330.TW':     { ratio:0.2,              adr:'TSM',    primary:'2330.TW',      currency:'TWD', exchange:'TWSE',               level:'II',  market:'NYSE',    sponsored:true,  depositary:'Citibank',      name:'TSMC',                      note:'Foreign ownership caps mean TSM ADR frequently trades at a 10–26% premium to the primary listing. Check live premium before buying.' },
-  'BABA:9988.HK':    { ratio:0.125,            adr:'BABA',   primary:'9988.HK',      currency:'HKD', exchange:'HKEX',               level:'II',  market:'NYSE',    sponsored:true,  depositary:'Citibank',      name:'Alibaba Group',             note:'Monitor PCAOB/HFCAA delisting risk quarterly.' },
-  'JD:9618.HK':      { ratio:0.5,              adr:'JD',     primary:'9618.HK',      currency:'HKD', exchange:'HKEX',               level:'II',  market:'NASDAQ',  sponsored:true,  depositary:'JPMorgan',      name:'JD.com',                    note:'Monitor PCAOB/HFCAA delisting risk quarterly.' },
-  'VALE:VALE3.SA':   { ratio:1,                adr:'VALE',   primary:'VALE3.SA',     currency:'BRL', exchange:'B3',                 level:'III', market:'NYSE',    sponsored:true,  depositary:'Citibank',      name:'Vale SA' },
-  'PBR:PETR4.SA':    { ratio:1,                adr:'PBR',    primary:'PETR4.SA',     currency:'BRL', exchange:'B3',                 level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Petrobras',                 note:'PBR = preferred shares (PETR4). PBR.A = common shares (PETR3). Ensure share class matches.' },
-  'ITUB:ITUB4.SA':   { ratio:1,                adr:'ITUB',   primary:'ITUB4.SA',     currency:'BRL', exchange:'B3',                 level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Itaú Unibanco' },
-  'HDB:HDFCBANK.NS': { ratio:0.3333,           adr:'HDB',    primary:'HDFCBANK.NS',  currency:'INR', exchange:'NSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'HDFC Bank' },
-  'IBN:ICICIBANK.NS':{ ratio:0.5,              adr:'IBN',    primary:'ICICIBANK.NS', currency:'INR', exchange:'NSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'ICICI Bank' },
-  'WIT:WIPRO.NS':    { ratio:1,                adr:'WIT',    primary:'WIPRO.NS',     currency:'INR', exchange:'NSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'Wipro' },
-  'INFY:INFY.NS':    { ratio:1,                adr:'INFY',   primary:'INFY.NS',      currency:'INR', exchange:'NSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'Infosys' },
-  'BHP:BHP.AX':      { ratio:1,                adr:'BHP',    primary:'BHP.AX',       currency:'AUD', exchange:'ASX',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'BHP Group' },
-  'SSNLF:005930.KS': { ratio:1,                adr:'SSNLF',  primary:'005930.KS',    currency:'KRW', exchange:'KRX',                level:'I',   market:'OTC',     sponsored:false, depositary:'None',          name:'Samsung Electronics',       note:'SSNLF is an OTC-traded foreign ordinary share, not a true ADR. Thinly traded — wide spreads. Consider buying 005930.KS directly on KRX via IBKR.' },
+  'TM:7203.T':         { ratio:0.1,    adr:'TM',     primary:'7203.T',       currency:'JPY', exchange:'TSE',                level:'III', market:'NYSE',    sponsored:true,  depositary:'BNY Mellon',    name:'Toyota Motor' },
+  'HMC:7267.T':        { ratio:0.3333, adr:'HMC',    primary:'7267.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Honda Motor' },
+  'SONY:6758.T':       { ratio:1,      adr:'SONY',   primary:'6758.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Sony Group' },
+  'MUFG:8306.T':       { ratio:1,      adr:'MUFG',   primary:'8306.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'BNY Mellon',    name:'Mitsubishi UFJ Financial' },
+  'SMFG:8316.T':       { ratio:1.6667, adr:'SMFG',   primary:'8316.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Citi',          name:'Sumitomo Mitsui Financial' },
+  'MFG:8411.T':        { ratio:5,      adr:'MFG',    primary:'8411.T',       currency:'JPY', exchange:'TSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'BNY Mellon',    name:'Mizuho Financial' },
+  'NTDOY:7974.T':      { ratio:4,      adr:'NTDOY',  primary:'7974.T',       currency:'JPY', exchange:'TSE',                level:'I',   market:'OTC',     sponsored:false, depositary:'Multiple',      name:'Nintendo',                  note:'Level I OTC — wider spreads than exchange-listed ADRs.' },
+  'GSK:GSK.L':         { ratio:0.5,    adr:'GSK',    primary:'GSK.L',        currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'GSK plc' },
+  'UL:ULVR.L':         { ratio:1,      adr:'UL',     primary:'ULVR.L',       currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'Unilever' },
+  'BP:BP.L':           { ratio:0.1667, adr:'BP',     primary:'BP.L',         currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'BP plc' },
+  'RIO:RIO.L':         { ratio:1,      adr:'RIO',    primary:'RIO.L',        currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Rio Tinto' },
+  'SHEL:SHEL.L':       { ratio:0.5,    adr:'SHEL',   primary:'SHEL.L',       currency:'GBP', exchange:'LSE',                level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Shell plc' },
+  'HSBC:HSBA.L':       { ratio:0.2,    adr:'HSBC',   primary:'HSBA.L',       currency:'GBP', exchange:'LSE',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'BNY Mellon',    name:'HSBC Holdings' },
+  'ASML:ASML.AS':      { ratio:1,      adr:'ASML',   primary:'ASML.AS',      currency:'EUR', exchange:'Euronext Amsterdam', level:'II',  market:'NASDAQ',  sponsored:true,  depositary:'JPMorgan',      name:'ASML Holding' },
+  'PHG:PHIA.AS':       { ratio:1,      adr:'PHG',    primary:'PHIA.AS',      currency:'EUR', exchange:'Euronext Amsterdam', level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'Philips' },
+  'EADSY:AIR.PA':      { ratio:4,      adr:'EADSY',  primary:'AIR.PA',       currency:'EUR', exchange:'Euronext Paris',     level:'I',   market:'OTC',     sponsored:false, depositary:'Multiple',      name:'Airbus SE',                 note:'Unsponsored OTC ADR. Consider buying AIR.PA directly on Euronext for tighter spreads.' },
+  'SNY:SAN.PA':        { ratio:2,      adr:'SNY',    primary:'SAN.PA',       currency:'EUR', exchange:'Euronext Paris',     level:'II',  market:'NASDAQ',  sponsored:true,  depositary:'JPMorgan',      name:'Sanofi' },
+  'LVMUY:MC.PA':       { ratio:5,      adr:'LVMUY',  primary:'MC.PA',        currency:'EUR', exchange:'Euronext Paris',     level:'I',   market:'OTC',     sponsored:false, depositary:'Multiple',      name:'LVMH' },
+  'SAP:SAP.DE':        { ratio:1,      adr:'SAP',    primary:'SAP.DE',       currency:'EUR', exchange:'XETRA',              level:'II',  market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'SAP SE' },
+  'SIEGY:SIE.DE':      { ratio:2,      adr:'SIEGY',  primary:'SIE.DE',       currency:'EUR', exchange:'XETRA',              level:'I',   market:'OTC',     sponsored:true,  depositary:'Deutsche Bank', name:'Siemens AG' },
+  'BMWKY:BMW.DE':      { ratio:3,      adr:'BMWKY',  primary:'BMW.DE',       currency:'EUR', exchange:'XETRA',              level:'I',   market:'OTC',     sponsored:false, depositary:'Multiple',      name:'BMW AG' },
+  'NVS:NOVN.SW':       { ratio:1,      adr:'NVS',    primary:'NOVN.SW',      currency:'CHF', exchange:'SIX',                level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Novartis' },
+  'RHHBY:ROP.SW':      { ratio:8,      adr:'RHHBY',  primary:'ROP.SW',       currency:'CHF', exchange:'SIX',                level:'I',   market:'OTC',     sponsored:true,  depositary:'JPMorgan',      name:'Roche Holding',             note:'RHHBY = non-voting bearer shares. RHHVF = voting registered shares — different share classes with different ratios.' },
+  'NSRGY:NESN.SW':     { ratio:1,      adr:'NSRGY',  primary:'NESN.SW',      currency:'CHF', exchange:'SIX',                level:'I',   market:'OTC',     sponsored:true,  depositary:'Citi',          name:'Nestlé',                    note:'Level I OTC. Consider buying NESN.SW directly via IBKR for tighter spreads.' },
+  'NVO:NOVO-B.CO':     { ratio:1,      adr:'NVO',    primary:'NOVO-B.CO',    currency:'DKK', exchange:'Nasdaq Copenhagen',  level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Novo Nordisk' },
+  'TSM:2330.TW':       { ratio:0.2,    adr:'TSM',    primary:'2330.TW',      currency:'TWD', exchange:'TWSE',               level:'III', market:'NYSE',    sponsored:true,  depositary:'Citi',          name:'TSMC',                      note:'Foreign ownership caps mean TSM ADR frequently trades at a 10–26% premium to the primary listing. Check live premium before buying.' },
+  'TCEHY:0700.HK':     { ratio:1,      adr:'TCEHY',  primary:'0700.HK',      currency:'HKD', exchange:'HKEX',               level:'I',   market:'OTC',     sponsored:false, depositary:'Multiple',      name:'Tencent Holdings' },
+  'BABA:9988.HK':      { ratio:0.125,  adr:'BABA',   primary:'9988.HK',      currency:'HKD', exchange:'HKEX',               level:'III', market:'NYSE',    sponsored:true,  depositary:'Citi',          name:'Alibaba Group',             note:'Monitor PCAOB/HFCAA delisting risk quarterly.' },
+  'JD:9618.HK':        { ratio:0.5,    adr:'JD',     primary:'9618.HK',      currency:'HKD', exchange:'HKEX',               level:'III', market:'NASDAQ',  sponsored:true,  depositary:'Deutsche Bank', name:'JD.com',                    note:'Monitor PCAOB/HFCAA delisting risk quarterly.' },
+  'VALE:VALE3.SA':     { ratio:1,      adr:'VALE',   primary:'VALE3.SA',     currency:'BRL', exchange:'B3',                 level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Vale SA' },
+  'PBR:PETR3.SA':      { ratio:0.5,    adr:'PBR',    primary:'PETR3.SA',     currency:'BRL', exchange:'B3',                 level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Petrobras',                 note:'PBR = common shares (PETR3). PBR.A = preferred shares (PETR4). Ensure share class matches.' },
+  'PBR.A:PETR4.SA':    { ratio:0.5,    adr:'PBR.A',  primary:'PETR4.SA',     currency:'BRL', exchange:'B3',                 level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Petrobras (Preferred)',      note:'PBR.A = preferred shares (PETR4). PBR = common shares (PETR3). Ensure share class matches.' },
+  'ITUB:ITUB4.SA':     { ratio:1,      adr:'ITUB',   primary:'ITUB4.SA',     currency:'BRL', exchange:'B3',                 level:'II',  market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Itaú Unibanco' },
+  'HDB:HDFCBANK.BO':   { ratio:0.3333, adr:'HDB',    primary:'HDFCBANK.BO',  currency:'INR', exchange:'BSE',                level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'HDFC Bank' },
+  'IBN:ICICIBANK.NS':  { ratio:0.5,    adr:'IBN',    primary:'ICICIBANK.NS', currency:'INR', exchange:'NSE',                level:'III', market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'ICICI Bank' },
+  'WIT:WIPRO.NS':      { ratio:1,      adr:'WIT',    primary:'WIPRO.NS',     currency:'INR', exchange:'NSE',                level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Wipro' },
+  'INFY:INFY.NS':      { ratio:1,      adr:'INFY',   primary:'INFY.NS',      currency:'INR', exchange:'NSE',                level:'III', market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'Infosys' },
+  'BHP:BHP.AX':        { ratio:0.5,    adr:'BHP',    primary:'BHP.AX',       currency:'AUD', exchange:'ASX',                level:'III', market:'NYSE',    sponsored:true,  depositary:'Citi',          name:'BHP Group' },
 };
 
 const tickerIndex = {};
@@ -64,46 +63,44 @@ Object.entries(knownPairs).forEach(([key, pair]) => {
 });
 
 const adrRegistry = {
-  'TM':     { level:'II',  market:'NYSE',    sponsored:true },
+  'TM':     { level:'III', market:'NYSE',    sponsored:true },
   'HMC':    { level:'II',  market:'NYSE',    sponsored:true },
   'SONY':   { level:'II',  market:'NYSE',    sponsored:true },
   'MUFG':   { level:'II',  market:'NYSE',    sponsored:true },
   'SMFG':   { level:'II',  market:'NYSE',    sponsored:true },
   'MFG':    { level:'II',  market:'NYSE',    sponsored:true },
-  'NTDOY':  { level:'I',   market:'OTC',     sponsored:true },
+  'NTDOY':  { level:'I',   market:'OTC',     sponsored:false },
   'GSK':    { level:'II',  market:'NYSE',    sponsored:true },
   'UL':     { level:'II',  market:'NYSE',    sponsored:true },
   'BP':     { level:'II',  market:'NYSE',    sponsored:true },
-  'AZN':    { level:'II',  market:'NASDAQ',  sponsored:true },
   'RIO':    { level:'II',  market:'NYSE',    sponsored:true },
-  'SHEL':   { level:'II',  market:'NYSE',    sponsored:true },
+  'SHEL':   { level:'III', market:'NYSE',    sponsored:true },
   'HSBC':   { level:'II',  market:'NYSE',    sponsored:true },
   'ASML':   { level:'II',  market:'NASDAQ',  sponsored:true },
   'PHG':    { level:'II',  market:'NYSE',    sponsored:true },
   'EADSY':  { level:'I',   market:'OTC',     sponsored:false },
-  'SNY':    { level:'III', market:'NASDAQ',  sponsored:true },
-  'LVMUY':  { level:'I',   market:'OTC',     sponsored:true },
-  'TTEHY':  { level:'I',   market:'OTC',     sponsored:true },
+  'SNY':    { level:'II',  market:'NASDAQ',  sponsored:true },
+  'LVMUY':  { level:'I',   market:'OTC',     sponsored:false },
   'SAP':    { level:'II',  market:'NYSE',    sponsored:true },
   'SIEGY':  { level:'I',   market:'OTC',     sponsored:true },
-  'BMWYY':  { level:'I',   market:'OTC',     sponsored:true },
+  'BMWKY':  { level:'I',   market:'OTC',     sponsored:false },
   'NVS':    { level:'II',  market:'NYSE',    sponsored:true },
   'RHHBY':  { level:'I',   market:'OTC',     sponsored:true },
   'NSRGY':  { level:'I',   market:'OTC',     sponsored:true },
   'NVO':    { level:'III', market:'NYSE',    sponsored:true },
-  'TSM':    { level:'II',  market:'NYSE',    sponsored:true },
-  'BABA':   { level:'II',  market:'NYSE',    sponsored:true },
-  'JD':     { level:'II',  market:'NASDAQ',  sponsored:true },
+  'TSM':    { level:'III', market:'NYSE',    sponsored:true },
+  'TCEHY':  { level:'I',   market:'OTC',     sponsored:false },
+  'BABA':   { level:'III', market:'NYSE',    sponsored:true },
+  'JD':     { level:'III', market:'NASDAQ',  sponsored:true },
   'VALE':   { level:'III', market:'NYSE',    sponsored:true },
   'PBR':    { level:'III', market:'NYSE',    sponsored:true },
-  'ITUB':   { level:'III', market:'NYSE',    sponsored:true },
-  'HDB':    { level:'II',  market:'NYSE',    sponsored:true },
-  'IBN':    { level:'II',  market:'NYSE',    sponsored:true },
-  'WIT':    { level:'II',  market:'NYSE',    sponsored:true },
-  'INFY':   { level:'II',  market:'NYSE',    sponsored:true },
-  'BHP':    { level:'II',  market:'NYSE',    sponsored:true },
-  'SSNLF':  { level:'I',   market:'OTC',     sponsored:false, depositary:'None',
-              warning:'SSNLF is an OTC-traded foreign ordinary share, not a true ADR. Thinly traded — wide spreads. Consider buying 005930.KS on KRX via IBKR.' },
+  'PBR.A':  { level:'II',  market:'NYSE',    sponsored:true },
+  'ITUB':   { level:'II',  market:'NYSE',    sponsored:true },
+  'HDB':    { level:'III', market:'NYSE',    sponsored:true },
+  'IBN':    { level:'III', market:'NYSE',    sponsored:true },
+  'WIT':    { level:'III', market:'NYSE',    sponsored:true },
+  'INFY':   { level:'III', market:'NYSE',    sponsored:true },
+  'BHP':    { level:'III', market:'NYSE',    sponsored:true },
 };
 
 const levelTooltips = {
@@ -112,25 +109,25 @@ const levelTooltips = {
   'III': { title: 'Level III ADR', detail: 'Exchange-listed. Strictest SEC requirements. Can raise capital in US markets.' },
 };
 
-const adrCommissionRate = 0.10;
-const adrCommissionNoteHtml = '<a href="https://www.ibkr.com/commissions" target="_blank" rel="noopener noreferrer">IBKR</a> · <a href="https://robinhood.com/us/en/support/articles/trading-fees-on-robinhood/" target="_blank" rel="noopener noreferrer">Robinhood</a> · <a href="https://www.schwab.com/pricing" target="_blank" rel="noopener noreferrer">Schwab</a>';
+const localCommissionRate = 0.10;
+const commissionNoteHtml = '<a href="https://www.ibkr.com/commissions" target="_blank" rel="noopener noreferrer">IBKR</a> · <a href="https://robinhood.com/us/en/support/articles/trading-fees-on-robinhood/" target="_blank" rel="noopener noreferrer">Robinhood</a> · <a href="https://www.schwab.com/pricing" target="_blank" rel="noopener noreferrer">Schwab</a>';
 
-function calculateAdrCommission(adrQuantity) {
-  return adrQuantity * adrCommissionRate;
+function calculateLocalCommission(localQuantity) {
+  return localQuantity * localCommissionRate;
 }
 
-let lastIbkrAdrCommission = null;
-let lastIbkrLocalCommission = null;
+let lastAutoLocalCommission = null;
+let lastAutoAdrCommission = null;
 let ibkrAdrOverridden = false;
 let ibkrLocalOverridden = false;
 
 const withholdingInfo = {
-  KRW: { rate:'15% (US treaty)',   note:'Korea withholds 15% on dividends for US investors (treaty rate; domestic rate is 22%). Claim the foreign tax credit via IRS Form 1116. Hold in a taxable account, not an IRA, to use the credit.' },
+  KRW: { rate:'15% (US treaty)',   note:'Korea withholds 15% on dividends for US investors (treaty rate; domestic rate is 22%). Note: since 2024, some payers withhold at the full 22% first — an after-the-fact refund claim may be required. Claim the foreign tax credit via IRS Form 1116. Hold in a taxable account, not an IRA, to use the credit.' },
   JPY: { rate:'10% (US treaty)',   note:'Japan withholds 10% on dividends for US investors (treaty rate; domestic rate is 20.315%). Claim via IRS Form 1116.' },
-  EUR: { rate:'Varies by country', note:'EU withholding varies: France 12.8%, Germany 25%, Netherlands 15%. Check the country-specific treaty rate. Claim via IRS Form 1116.' },
+  EUR: { rate:'Varies by country', note:'EU withholding varies: France 12.8%, Germany 15% (US treaty), Netherlands 15%. Check the country-specific treaty rate. Claim via IRS Form 1116.' },
   GBP: { rate:'0%',               note:'UK pays dividends gross — no withholding tax for US investors.' },
   TWD: { rate:'21%',              note:'Taiwan withholds 21% on dividends. Limited treaty benefit for US investors. Claim what is eligible via IRS Form 1116.' },
-  BRL: { rate:'15%',              note:'Brazil withholds 15% on dividends for US investors. Claim via IRS Form 1116.' },
+  BRL: { rate:'10%',              note:'Brazil withholds 10% on dividends for US investors. Claim via IRS Form 1116.' },
   INR: { rate:'25% (US treaty)',  note:'India withholds 25% on dividends for US investors (treaty rate). Claim via IRS Form 1116.' },
   HKD: { rate:'0%',              note:'Hong Kong pays dividends gross — no withholding tax at source for US investors.' },
   AUD: { rate:'15% (US treaty)',  note:'Australia withholds 15% on dividends for US investors (treaty rate; domestic is 30%). Claim via IRS Form 1116.' },
@@ -341,11 +338,60 @@ class FXFetcher {
 
 const fxFetcher = new FXFetcher();
 
+function clearOtherSide(enteredSide) {
+  const otherSide = enteredSide === 'adr' ? 'local' : 'adr';
+
+  // Clear the other ticker and its price/name/status
+  const otherTickerField = document.querySelector(`#${otherSide === 'adr' ? 'adr' : 'local'}Ticker`);
+  if (otherTickerField) otherTickerField.value = '';
+  const otherPriceId = otherSide === 'adr' ? 'adrPrice' : 'localPrice';
+  fieldManager.unlockField(otherPriceId);
+  const otherPriceField = document.querySelector(`#${otherPriceId}`);
+  if (otherPriceField) otherPriceField.value = '';
+  const otherNameId = otherSide === 'adr' ? 'adrName' : 'localName';
+  document.querySelector(`#${otherNameId}`).textContent = '';
+  const otherStatusId = otherSide === 'adr' ? 'adrLookupStatus' : 'localLookupStatus';
+  fieldManager.clearStatus(otherStatusId);
+
+  // Remove all auto-match notes
+  document.querySelectorAll('.auto-match-note').forEach(el => el.remove());
+
+  // Clear ADR badge (always — no known pair means no badge)
+  document.querySelector('#adrTicker')?.closest('label')?.querySelector('.adr-badge-wrapper')?.remove();
+
+  // Clear ratio and its warning
+  const ratioField = document.querySelector('#ratio');
+  if (ratioField) ratioField.value = '';
+  const ratioWarning = document.querySelector('#ratioWarning');
+  if (ratioWarning) {
+    ratioWarning.textContent = '';
+    delete ratioWarning.dataset.source;
+  }
+
+  // When entering an unknown ADR ticker: we don't know the foreign currency, so clear
+  // currency, FX rate, and the primary side name too (nothing about the pair is known).
+  // When entering an unknown primary ticker: keep currency/FX — the price API may have
+  // returned currency already, and the user can still fill in ratio/ADR manually.
+  if (enteredSide === 'adr') {
+    fieldManager.unlockField('localCurrency');
+    const localCurrencyField = document.querySelector('#localCurrency');
+    if (localCurrencyField) localCurrencyField.value = '';
+    fieldManager.unlockField('localToUsdRate');
+    const fxField = document.querySelector('#localToUsdRate');
+    if (fxField) fxField.value = '';
+    fieldManager.clearStatus('fxLookupStatus');
+    document.querySelector('#currencyName').textContent = '';
+  }
+}
+
 async function tryAutoPopulatePair(enteredTicker, enteredSide) {
   if (!enteredTicker) return;
 
   const pairKey = tickerIndex[enteredTicker.toUpperCase()];
-  if (!pairKey) return;
+  if (!pairKey) {
+    clearOtherSide(enteredSide);
+    return;
+  }
 
   const pair = knownPairs[pairKey];
   const otherSide = enteredSide === 'adr' ? 'local' : 'adr';
@@ -363,15 +409,9 @@ async function tryAutoPopulatePair(enteredTicker, enteredSide) {
     ratioWarning.dataset.source = 'pair';
   }
 
-  // Clear any stale alternatives note (now shown in badge tooltip)
-  const adrTickerLabel = document.querySelector('#adrTicker')?.closest('label');
-  if (adrTickerLabel) {
-    adrTickerLabel.querySelector('.alternatives-note')?.remove();
-  }
-
   // Always apply the known currency and name for this pair — more reliable than the price API response
   fieldManager.updateAndLock('localCurrency', pair.currency);
-  document.querySelector('#currencyName').textContent = getCurrencyName(pair.currency);
+  document.querySelector('#currencyName').textContent = '';
   document.querySelector('#localName').textContent = pair.name;
   document.querySelector('#adrName').textContent = pair.name;
   renderAdrBadge(pair.adr);
@@ -379,19 +419,16 @@ async function tryAutoPopulatePair(enteredTicker, enteredSide) {
   // Always populate the other side ticker + fetch its price (whether empty or mismatched)
   const otherField = document.querySelector(`#${otherSide === 'adr' ? 'adr' : 'local'}Ticker`);
   if (otherField) {
-    const wasEmpty = !otherField.value.trim();
     otherField.value = otherTicker;
 
-    if (wasEmpty) {
-      const otherLabel = otherField.closest('label');
-      if (otherLabel) {
-        const existing = otherLabel.querySelector('.auto-match-note');
-        if (existing) existing.remove();
-        const matchNote = document.createElement('small');
-        matchNote.className = 'auto-match-note';
-        matchNote.textContent = `ⓘ Auto-matched from ${enteredTicker}`;
-        otherLabel.appendChild(matchNote);
-      }
+    // Remove stale auto-match notes from both sides, then add fresh one on the other side
+    document.querySelectorAll('.auto-match-note').forEach(el => el.remove());
+    const otherLabel = otherField.closest('label');
+    if (otherLabel) {
+      const matchNote = document.createElement('small');
+      matchNote.className = 'auto-match-note';
+      matchNote.textContent = `ⓘ Auto-matched from ${enteredTicker}`;
+      otherLabel.appendChild(matchNote);
     }
 
     await priceFetcher.autoFetch(otherTicker, otherSide);
@@ -453,9 +490,6 @@ function renderAdrBadge(ticker) {
   // Row 3: Depositary (if known)
   if (depositary && depositary !== 'None' && depositary !== 'Multiple') {
     rows.push(`<div class="tt-meta"><span class="tt-label">Depositary</span> ${depositary}</div>`);
-  }
-  if (pair?.alternatives?.length) {
-    rows.push(`<div class="tt-meta"><span class="tt-label">Other Tickers</span> ${pair.alternatives.join(', ')}</div>`);
   }
   tooltip.innerHTML = rows.join('');
 
@@ -536,6 +570,7 @@ const moneyUsd = new Intl.NumberFormat("en-US", {
 });
 
 const numberFmt = new Intl.NumberFormat("en-US", { maximumFractionDigits: 4 });
+const plainUsd = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const fxFmt = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 6,
@@ -646,6 +681,22 @@ function calculate(values) {
 
 function updateView() {
   const values = readInputs();
+
+  // Apply commission auto-fill to values before calculating
+  if (!ibkrLocalOverridden) {
+    const autoLocalComm = calculateLocalCommission(values.localQuantity);
+    const currentLocalComm = parseFloat(document.querySelector('#localCommission').value) || 0;
+    if (currentLocalComm === 0 || currentLocalComm === lastAutoLocalCommission) {
+      values.localCommission = autoLocalComm;
+      document.querySelector('#localCommission').value = autoLocalComm.toFixed(2);
+      lastAutoLocalCommission = autoLocalComm;
+    }
+  }
+  if (!ibkrAdrOverridden) {
+    values.adrCommission = 0;
+    document.querySelector('#adrCommission').value = '0';
+  }
+
   const result = calculate(values);
   const currency = (values.localCurrency || "local").toUpperCase();
   const primaryWins = result.localTotalUsd < result.adrTotalUsd;
@@ -666,10 +717,10 @@ function updateView() {
     document.querySelector("#summaryLine").textContent = `Cheaper than ${loser} by ${moneyUsd.format(cheaperBy)} (${savingPct}%)`;
   }
 
-  document.querySelector("#localPriceLabel").textContent = `Price (${currency})`;
+  document.querySelector("#localPriceLabel").textContent = `Price (${currency} - ${getCurrencyName(currency)})`;
   document.querySelector("#localCommissionLabel").innerHTML = `Commission (${currency})<a class="comm-link" href="https://www.ibkr.com/commissions" target="_blank" rel="noopener noreferrer">IBKR&#8599;</a>`;
-  document.querySelector("#fxRateLabel").textContent = `FX Rate (1 ${currency} = $)`;
-  document.querySelector("#currencyName").textContent = getCurrencyName(currency);
+  document.querySelector("#fxRateLabel").textContent = `FX Rate (1 ${currency} = USD)`;
+  document.querySelector("#currencyName").textContent = '';
   document.querySelector("#adrQuantityOut").textContent = numberFmt.format(result.adrQuantity);
 
   document.querySelector("#adrChartValue").textContent = moneyUsd.format(result.adrTotalUsd);
@@ -711,13 +762,13 @@ function updateView() {
     document.querySelector('#bdLocalQty').textContent = numberFmt.format(result.localQuantity);
     document.querySelector('#bdLocalGross').textContent = `${localNumFmt.format(result.localGross)} ${localCcy}`;
     document.querySelector('#bdLocalComm').textContent = `${localNumFmt.format(result.localCommission)} ${localCcy}`;
-    document.querySelector('#bdLocalFxLabel').textContent = `1 ${localCcy} = $`;
+    document.querySelector('#bdLocalFxLabel').textContent = `1 ${localCcy} = USD`;
     document.querySelector('#bdLocalFxRate').textContent = values.localToUsdRate ? Number(values.localToUsdRate).toFixed(6) : '—';
     document.querySelector('#bdLocalTotal').textContent = moneyUsd.format(result.localTotalUsd);
     document.querySelector('#bdAdrQty').textContent = numberFmt.format(result.adrQuantity);
-    document.querySelector('#bdAdrGross').textContent = moneyUsd.format(result.adrGrossUsd);
-    document.querySelector('#bdAdrComm').textContent = result.adrCommissionUsd > 0 ? moneyUsd.format(result.adrCommissionUsd) : '—';
-    document.querySelector('#bdAdrFee').textContent = result.adrPassThroughFeeUsd > 0 ? moneyUsd.format(result.adrPassThroughFeeUsd) + '/yr' : '—';
+    document.querySelector('#bdAdrGross').textContent = `${plainUsd.format(result.adrGrossUsd)} USD`;
+    document.querySelector('#bdAdrComm').textContent = `${plainUsd.format(result.adrCommissionUsd)} USD`;
+    document.querySelector('#bdAdrFee').textContent = `${plainUsd.format(result.adrPassThroughFeeUsd)} USD/yr`;
     document.querySelector('#bdAdrTotal').textContent = moneyUsd.format(result.adrTotalUsd);
   }
 
@@ -729,25 +780,6 @@ function updateView() {
   document.querySelector("#fxInsight").textContent =
     `${currency} needs to ${direction} against USD by at least ${distancePct}`;
 
-  // TASK 5 — ADR commission auto-fill ($0.10/share); primary stays $0
-  const autoAdrComm = calculateAdrCommission(result.adrQuantity);
-  const adrCommField = document.querySelector('#adrCommission');
-  const localCommField = document.querySelector('#localCommission');
-  const adrCommNote = document.querySelector('#adrCommissionNote');
-  const localCommNote = document.querySelector('#localCommissionNote');
-
-  if (!ibkrAdrOverridden) {
-    const currentVal = parseFloat(adrCommField.value) || 0;
-    if (currentVal === 0 || currentVal === lastIbkrAdrCommission) {
-      adrCommField.value = autoAdrComm.toFixed(2);
-      lastIbkrAdrCommission = autoAdrComm;
-    }
-  }
-
-  if (!ibkrLocalOverridden) {
-    localCommField.value = '0';
-    if (localCommNote) localCommNote.innerHTML = '';
-  }
 
   // TASK 12 — Withholding tax callout
   const info = withholdingInfo[currency];
@@ -846,7 +878,7 @@ function renderSuggestions(side, quotes) {
         const result = await priceFetcher.autoFetch(quote.symbol, 'local');
         if (result.success && result.currency) {
           fieldManager.updateAndLock('localCurrency', result.currency);
-          document.querySelector("#currencyName").textContent = getCurrencyName(result.currency);
+          document.querySelector("#currencyName").textContent = '';
           await fxFetcher.autoFetch(result.currency, 'USD');
           await loadFXHistory();
         }
@@ -959,16 +991,6 @@ function queueTickerSearch(side) {
   }, 250);
 }
 
-document.querySelector('#adrCommission').addEventListener('focus', () => {
-  ibkrAdrOverridden = true;
-});
-document.querySelector('#adrCommission').addEventListener('input', () => {
-  const val = document.querySelector('#adrCommission').value;
-  if (val === '') {
-    ibkrAdrOverridden = false;
-    lastIbkrAdrCommission = null;
-  }
-});
 document.querySelector('#localCommission').addEventListener('focus', () => {
   ibkrLocalOverridden = true;
 });
@@ -976,7 +998,17 @@ document.querySelector('#localCommission').addEventListener('input', () => {
   const val = document.querySelector('#localCommission').value;
   if (val === '') {
     ibkrLocalOverridden = false;
-    lastIbkrLocalCommission = null;
+    lastAutoLocalCommission = null;
+  }
+});
+document.querySelector('#adrCommission').addEventListener('focus', () => {
+  ibkrAdrOverridden = true;
+});
+document.querySelector('#adrCommission').addEventListener('input', () => {
+  const val = document.querySelector('#adrCommission').value;
+  if (val === '') {
+    ibkrAdrOverridden = false;
+    lastAutoAdrCommission = null;
   }
 });
 
@@ -1239,8 +1271,11 @@ window.addEventListener('resize', () => {
   }
 });
 
-// Initialise
-writeInputs({ ...defaults, ...getSavedInputs() });
+// Initialise — strip saved commission values so auto-fill always runs on load
+const savedInputs = getSavedInputs();
+delete savedInputs.adrCommission;
+delete savedInputs.localCommission;
+writeInputs({ ...defaults, ...savedInputs });
 document.querySelector("#adrQuantityOut").classList.add("computed-output");
 populateCurrencies();
 // Trigger auto-populate and price fetch for default/saved tickers on load (skip if URL params present)
