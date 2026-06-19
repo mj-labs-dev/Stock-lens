@@ -338,58 +338,18 @@ class FXFetcher {
 
 const fxFetcher = new FXFetcher();
 
-function clearOtherSide(enteredSide) {
-  const otherSide = enteredSide === 'adr' ? 'local' : 'adr';
-
-  // Clear the other ticker and its price/name/status
-  const otherTickerField = document.querySelector(`#${otherSide === 'adr' ? 'adr' : 'local'}Ticker`);
-  if (otherTickerField) otherTickerField.value = '';
-  const otherPriceId = otherSide === 'adr' ? 'adrPrice' : 'localPrice';
-  fieldManager.unlockField(otherPriceId);
-  const otherPriceField = document.querySelector(`#${otherPriceId}`);
-  if (otherPriceField) otherPriceField.value = '';
-  const otherNameId = otherSide === 'adr' ? 'adrName' : 'localName';
-  document.querySelector(`#${otherNameId}`).textContent = '';
-  const otherStatusId = otherSide === 'adr' ? 'adrLookupStatus' : 'localLookupStatus';
-  fieldManager.clearStatus(otherStatusId);
-
-  // Remove all auto-match notes
-  document.querySelectorAll('.auto-match-note').forEach(el => el.remove());
-
-  // Clear ADR badge (always — no known pair means no badge)
-  document.querySelector('#adrTicker')?.closest('label')?.querySelector('.adr-badge-wrapper')?.remove();
-
-  // Clear ratio and its warning
-  const ratioField = document.querySelector('#ratio');
-  if (ratioField) ratioField.value = '';
-  const ratioWarning = document.querySelector('#ratioWarning');
-  if (ratioWarning) {
-    ratioWarning.textContent = '';
-    delete ratioWarning.dataset.source;
-  }
-
-  // When entering an unknown ADR ticker: we don't know the foreign currency, so clear
-  // currency, FX rate, and the primary side name too (nothing about the pair is known).
-  // When entering an unknown primary ticker: keep currency/FX — the price API may have
-  // returned currency already, and the user can still fill in ratio/ADR manually.
-  if (enteredSide === 'adr') {
-    fieldManager.unlockField('localCurrency');
-    const localCurrencyField = document.querySelector('#localCurrency');
-    if (localCurrencyField) localCurrencyField.value = '';
-    fieldManager.unlockField('localToUsdRate');
-    const fxField = document.querySelector('#localToUsdRate');
-    if (fxField) fxField.value = '';
-    fieldManager.clearStatus('fxLookupStatus');
-    document.querySelector('#currencyName').textContent = '';
-  }
-}
 
 async function tryAutoPopulatePair(enteredTicker, enteredSide) {
   if (!enteredTicker) return;
 
   const pairKey = tickerIndex[enteredTicker.toUpperCase()];
   if (!pairKey) {
-    clearOtherSide(enteredSide);
+    // Not a known pair — leave both sides alone so the user can fill them manually.
+    // Only remove stale auto-pair artifacts that would be misleading.
+    document.querySelectorAll('.auto-match-note').forEach(el => el.remove());
+    document.querySelector('#adrTicker')?.closest('label')?.querySelector('.adr-badge-wrapper')?.remove();
+    const ratioWarning = document.querySelector('#ratioWarning');
+    if (ratioWarning) delete ratioWarning.dataset.source;
     return;
   }
 
