@@ -1230,6 +1230,48 @@ body {
   color: var(--cream);
 }
 
+.reaction-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-strong);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+.reaction-btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reaction-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  color: var(--ink-secondary);
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  transition: color 0.15s;
+}
+
+.reaction-btn:hover {
+  color: var(--gold-dark);
+}
+
+.reaction-thanks {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--gold-dark);
+}
+
+.reaction-thanks.visible {
+  display: inline-flex;
+}
+
 @media (max-width: 860px) {
   .two-col-layout {
     grid-template-columns: 1fr;

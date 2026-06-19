@@ -1085,6 +1085,32 @@ document.querySelector("#fxProjectionsButton").addEventListener("click", () => {
   window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
 });
 
+const REACTION_SLUG = 'stock-lens';
+const REACTION_KEY = `reaction:${REACTION_SLUG}`;
+
+(function initReactions() {
+  const stored = localStorage.getItem(REACTION_KEY);
+  if (stored === 'like' || stored === 'dislike') {
+    document.getElementById('reactionBtns').style.display = 'none';
+    document.getElementById('reactionThanks').classList.add('visible');
+    return;
+  }
+
+  function vote(type) {
+    localStorage.setItem(REACTION_KEY, type);
+    document.getElementById('reactionBtns').style.display = 'none';
+    document.getElementById('reactionThanks').classList.add('visible');
+    fetch('/api/react', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug: REACTION_SLUG, type }),
+    }).catch(() => {});
+  }
+
+  document.getElementById('likeBtn').addEventListener('click', () => vote('like'));
+  document.getElementById('dislikeBtn').addEventListener('click', () => vote('dislike'));
+})();
+
 document.querySelector("#shareButton").addEventListener("click", async () => {
   const fullUrl = window.location.origin + encodeStateToUrl();
   const adr = document.querySelector('#adrTicker').value.trim();

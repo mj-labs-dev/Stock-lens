@@ -201,6 +201,26 @@ async function fetchTwelveDataPrice(symbol) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
 
+  if (url.pathname === "/api/react" && req.method === "POST") {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', async () => {
+      try {
+        const { slug, type } = JSON.parse(body);
+        const upstream = await fetch('https://www.mj-labs.dev/api/react', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug, type }),
+        });
+        const data = await upstream.text();
+        send(res, upstream.status, data);
+      } catch {
+        send(res, 500, JSON.stringify({ error: 'Server error' }));
+      }
+    });
+    return;
+  }
+
   if (url.pathname === "/api/search") {
     const query = url.searchParams.get("q") || "";
     await proxyJson(res, `https://query2.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}&quotesCount=8&newsCount=0&enableFuzzyQuery=true`);
