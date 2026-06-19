@@ -704,7 +704,8 @@ function updateView() {
   const ratioWarning = document.querySelector("#ratioWarning");
   const absPremium = Math.abs(result.premium);
   if (ratioWarning && ratioWarning.dataset.source !== 'pair') {
-    if (absPremium > 0.10) {
+    const bothPriced = values.adrPrice > 0 && values.localPrice > 0;
+    if (bothPriced && absPremium > 0.20) {
       ratioWarning.textContent = "⚠️ Large premium/discount detected. Please verify ratio is correct.";
       ratioWarning.dataset.tone = 'warning';
     } else if (ratioWarning.dataset.tone === 'warning') {
