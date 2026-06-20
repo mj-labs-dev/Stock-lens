@@ -1,6 +1,6 @@
 # Stock Lens — Content & Data Reference
 
-_Last updated: 2026-06-15. Source of truth: `app.js`. All values mirror the live codebase._
+_Last updated: 2026-06-20. Source of truth: `app.js`. All values mirror the live codebase._
 
 ---
 
@@ -8,25 +8,25 @@ _Last updated: 2026-06-15. Source of truth: `app.js`. All values mirror the live
 
 | Field | Value | Notes |
 |---|---|---|
-| `adrTicker` | `TM` | Toyota Motor (NYSE) |
-| `adrName` | Toyota Motor Corporation | |
-| `localTicker` | `7203.T` | Tokyo Stock Exchange |
-| `localName` | Toyota Motor Corporation | |
+| `adrTicker` | `TSM` | TSMC (NYSE) |
+| `adrName` | TSMC | |
+| `localTicker` | `2330.TW` | Taiwan Stock Exchange |
+| `localName` | TSMC | |
 | `adrPrice` | _(empty)_ | Auto-fetched via Yahoo Finance |
 | `localPrice` | _(empty)_ | Auto-fetched via Yahoo Finance |
-| `ratio` | `0.1` | ADR shares per 1 primary share |
+| `ratio` | `0.2` | ADR shares per 1 primary share |
 | `localQuantity` | `250` | Shares to purchase |
 | `adrCommission` | `0` | Auto-filled to `$0` (ADR) |
 | `adrPassThroughFee` | `0.03` | $0.03/share/yr (ADR custody fee) |
-| `localCommission` | `0` | Auto-filled to `$0.10/share × qty`; user can override |
+| `localCommission` | `0` | Auto-filled to `$0`; user can override |
 | `localToUsdRate` | _(empty)_ | Auto-fetched via Yahoo Finance / Frankfurter |
-| `localCurrency` | `JPY` | |
+| `localCurrency` | `TWD` | |
 
-> **Ratio direction:** `ratio = ADR shares per 1 primary share`. Toyota: 0.1 → buy 250 primary → 25 ADR. Airbus (EADSY): 4 → buy 250 primary → 1000 ADR.
+> **Ratio direction:** `ratio = ADR shares per 1 primary share`. TSMC: 0.2 → buy 250 primary → 50 ADR. Airbus (EADSY): 4 → buy 250 primary → 1000 ADR.
 
 ---
 
-## 2. Known Pairs Registry (38 entries)
+## 2. Known Pairs Registry (105 entries)
 
 | ADR | Primary | Name | Ratio | Currency | Exchange | Level | Market | Sponsored | Depositary | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -68,6 +68,73 @@ _Last updated: 2026-06-15. Source of truth: `app.js`. All values mirror the live
 | WIT | WIPRO.NS | Wipro | 1 | INR | NSE | III | NYSE | ✓ | JPMorgan | |
 | INFY | INFY.NS | Infosys | 1 | INR | NSE | III | NYSE | ✓ | Deutsche Bank | |
 | BHP | BHP.AX | BHP Group | 0.5 | AUD | ASX | III | NYSE | ✓ | Citi | 1 ADR = 2 Primary |
+| AAGIY | 1299.HK | AIA Group | 0.25 | HKD | HKEX | | | | | |
+| ARCAY | ARCAD.AS | Arcadis NV | 1 | EUR | Euronext Amsterdam | | | | | |
+| ASMIY | ASM.AS | ASM International | 1 | EUR | Euronext Amsterdam | | | | | |
+| BAESY | BA.L | BAE Systems | 0.25 | GBP | LSE | | | | | |
+| BIDU | 9888.HK | Baidu | 0.125 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
+| BKEAY | 0023.HK | Bank of East Asia | 1 | HKD | HKEX | | | | | |
+| BCS | BARC.L | Barclays | 0.25 | GBP | LSE | | | | | |
+| BILI | 9626.HK | Bilibili | 1 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
+| BHKLY | 2388.HK | BOC Hong Kong | 0.05 | HKD | HKEX | | | | | |
+| BTI | BATS.L | British American Tobacco | 1 | GBP | LSE | | | | | |
+| BTLCY | BLND.L | British Land | 1 | GBP | LSE | | | | | |
+| BZLFY | BNZL.L | Bunzl | 2 | GBP | LSE | | | | | |
+| BURBY | BRBY.L | Burberry Group | 1 | GBP | LSE | | | | | |
+| BYDDY | 1211.HK | BYD Co (H shares) | 1 | HKD | HKEX | | | | | |
+| CUK | CCL.L | Carnival plc | 1 | GBP | LSE | | | | | |
+| CPCAY | 0293.HK | Cathay Pacific | 0.2 | HKD | HKEX | | | | | |
+| CPYYY | CNA.L | Centrica | 0.25 | GBP | LSE | | | | | |
+| CRHKY | 0291.HK | China Resources Beer | 0.5 | HKD | HKEX | | | | | |
+| USPCY | 1725.HK | China Strategic Technology | 0.1 | HKD | HKEX | | | | | |
+| CTPCY | 0267.HK | CITIC Ltd | 0.2 | HKD | HKEX | | | | | |
+| CLPHY | 0002.HK | CLP Holdings | 1 | HKD | HKEX | | | | | |
+| DEO | DGE.L | Diageo | 0.25 | GBP | LSE | | | | | |
+| EXPGY | EXPN.L | Experian | 1 | GBP | LSE | | | | | |
+| FPAFY | 0142.HK | First Pacific | 0.2 | HKD | HKEX | | | | | |
+| HNLGY | 0010.HK | Hang Lung Group | 0.2 | HKD | HKEX | | | | | |
+| HLPPY | 0101.HK | Hang Lung Properties | 0.2 | HKD | HKEX | | | | | |
+| HDVTY | 0097.HK | Henderson Investment | 0.1 | HKD | HKEX | | | | | |
+| HLDCY | 0012.HK | Henderson Land | 1 | HKD | HKEX | | | | | |
+| HKMPY | HIK.L | Hikma Pharmaceuticals | 0.5 | GBP | LSE | | | | | |
+| HOKCY | 0003.HK | HK & China Gas | 1 | HKD | HKEX | | | | | |
+| HYSNY | 0014.HK | Hysan Development | 0.5 | HKD | HKEX | | | | | |
+| BZ | 2076.HK | Kanzhun (BOSS Zhipin) | 0.5 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
+| KGFHY | KGF.L | Kingfisher | 0.5 | GBP | LSE | | | | | |
+| KKPNY | KPN.AS | KPN | 1 | EUR | Euronext Amsterdam | | | | | |
+| LMPMY | 2314.HK | Lee & Man Paper | 0.1 | HKD | HKEX | | | | | |
+| LGGNY | LGEN.L | Legal & General | 0.2 | GBP | LSE | | | | | |
+| LNVGY | 0992.HK | Lenovo Group | 0.05 | HKD | HKEX | | | | | |
+| LYG | LLOY.L | Lloyds Banking Group | 0.25 | GBP | LSE | | | | | |
+| MAKSY | MKS.L | Marks & Spencer | 0.5 | GBP | LSE | | | | | |
+| MPNGY | 3690.HK | Meituan | 0.5 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
+| NTES | 9999.HK | NetEase | 0.2 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
+| NDVLY | 0017.HK | New World Development | 2 | HKD | HKEX | | | | | |
+| NIO | 9866.HK | NIO | 1 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
+| NOAH | 6686.HK | Noah Holdings | 0.2 | HKD | HKEX | | | | | |
+| PSO | PSON.L | Pearson | 1 | GBP | LSE | | | | | |
+| HGKGY | 0006.HK | Power Assets Holdings | 1 | HKD | HKEX | | | | | |
+| PUK | PRU.L | Prudential plc | 0.5 | GBP | LSE | | | | | |
+| QFIN | 3660.HK | QFIN Holdings | 0.5 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
+| RTO | RTO.L | Rentokil Initial | 0.2 | GBP | LSE | | | | | |
+| RYCEY | RR.L | Rolls-Royce | 1 | GBP | LSE | | | | | |
+| JSAIY | SBRY.L | Sainsbury's | 0.25 | GBP | LSE | | | | | |
+| SGHIY | 0363.HK | Shanghai Industrial | 0.1 | HKD | HKEX | | | | | |
+| SHALY | 0069.HK | Shangri-La Asia | 0.05 | HKD | HKEX | | | | | |
+| SNLAY | 0083.HK | Sino Land | 0.2 | HKD | HKEX | | | | | |
+| SNN | SN.L | Smith & Nephew | 0.5 | GBP | LSE | | | | | |
+| SMGZY | SMIN.L | Smiths Group | 1 | GBP | LSE | | | | | |
+| SUHJY | 0016.HK | Sun Hung Kai Properties | 1 | HKD | HKEX | | | | | |
+| SWRAY | 0019.HK | Swire Pacific (A) | 1 | HKD | HKEX | | | | | |
+| SWRBY | 0087.HK | Swire Pacific (B) | 0.2 | HKD | HKEX | | | | | |
+| TTNDY | 0669.HK | Techtronic Industries | 0.2 | HKD | HKEX | | | | | |
+| TCOM | 9961.HK | Trip.com | 1 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
+| TUYA | 2391.HK | Tuya Inc | 1 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
+| UUGRY | UU.L | United Utilities | 0.5 | GBP | LSE | | | | | |
+| JDWPY | JDW.L | J.D. Wetherspoon | 0.2 | GBP | LSE | | | | | |
+| XPEV | 9868.HK | XPeng | 0.5 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
+| ZLAB | 9688.HK | Zai Lab | 0.1 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
+| ZH | 2390.HK | Zhihu | 0.3333 | HKD | HKEX | | | | | Monitor PCAOB/HFCAA delisting risk |
 
 
 ---
@@ -86,7 +153,7 @@ _Last updated: 2026-06-15. Source of truth: `app.js`. All values mirror the live
 
 | Route | Rate | Formula |
 |---|---|---|
-| Primary (local) | $0.10/share | `qty × $0.10` — auto-filled; user can override |
+| Primary (local) | $0 | Auto-filled to zero; user can override |
 | ADR (US) | $0 | Auto-filled to zero; user can override |
 
 Broker links shown in UI: IBKR · Robinhood · Schwab

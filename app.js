@@ -1,17 +1,17 @@
 const defaults = {
-  adrTicker: "TM",
-  adrName: "Toyota Motor Corporation",
-  localTicker: "7203.T",
-  localName: "Toyota Motor Corporation",
+  adrTicker: "TSM",
+  adrName: "TSMC",
+  localTicker: "2330.TW",
+  localName: "TSMC",
   adrPrice: "",
   localPrice: "",
-  ratio: 0.1,
+  ratio: 0.2,
   localQuantity: 250,
   adrCommission: 0,
   adrPassThroughFee: 0.03,
   localCommission: 0,
   localToUsdRate: "",
-  localCurrency: "JPY",
+  localCurrency: "TWD",
   fxStatus: ""
 };
 
@@ -54,6 +54,73 @@ const knownPairs = {
   'WIT:WIPRO.NS':      { ratio:1,      adr:'WIT',    primary:'WIPRO.NS',     currency:'INR', exchange:'NSE',                level:'III', market:'NYSE',    sponsored:true,  depositary:'JPMorgan',      name:'Wipro' },
   'INFY:INFY.NS':      { ratio:1,      adr:'INFY',   primary:'INFY.NS',      currency:'INR', exchange:'NSE',                level:'III', market:'NYSE',    sponsored:true,  depositary:'Deutsche Bank', name:'Infosys' },
   'BHP:BHP.AX':        { ratio:0.5,    adr:'BHP',    primary:'BHP.AX',       currency:'AUD', exchange:'ASX',                level:'III', market:'NYSE',    sponsored:true,  depositary:'Citi',          name:'BHP Group' },
+  'AAGIY:1299.HK':     { ratio:0.25,   adr:'AAGIY',  primary:'1299.HK',      currency:'HKD', exchange:'HKEX',               name:'AIA Group' },
+  'ARCAY:ARCAD.AS':    { ratio:1,      adr:'ARCAY',  primary:'ARCAD.AS',     currency:'EUR', exchange:'Euronext Amsterdam', name:'Arcadis NV' },
+  'ASMIY:ASM.AS':      { ratio:1,      adr:'ASMIY',  primary:'ASM.AS',       currency:'EUR', exchange:'Euronext Amsterdam', name:'ASM International' },
+  'BAESY:BA.L':        { ratio:0.25,   adr:'BAESY',  primary:'BA.L',         currency:'GBP', exchange:'LSE',                name:'BAE Systems' },
+  'BIDU:9888.HK':      { ratio:0.125,  adr:'BIDU',   primary:'9888.HK',      currency:'HKD', exchange:'HKEX',               name:'Baidu',                     note:'Monitor PCAOB/HFCAA delisting risk.' },
+  'BKEAY:0023.HK':     { ratio:1,      adr:'BKEAY',  primary:'0023.HK',      currency:'HKD', exchange:'HKEX',               name:'Bank of East Asia' },
+  'BCS:BARC.L':        { ratio:0.25,   adr:'BCS',    primary:'BARC.L',       currency:'GBP', exchange:'LSE',                name:'Barclays' },
+  'BILI:9626.HK':      { ratio:1,      adr:'BILI',   primary:'9626.HK',      currency:'HKD', exchange:'HKEX',               name:'Bilibili',                  note:'Monitor PCAOB/HFCAA delisting risk.' },
+  'BHKLY:2388.HK':     { ratio:0.05,   adr:'BHKLY',  primary:'2388.HK',      currency:'HKD', exchange:'HKEX',               name:'BOC Hong Kong' },
+  'BTI:BATS.L':        { ratio:1,      adr:'BTI',    primary:'BATS.L',       currency:'GBP', exchange:'LSE',                name:'British American Tobacco' },
+  'BTLCY:BLND.L':      { ratio:1,      adr:'BTLCY',  primary:'BLND.L',       currency:'GBP', exchange:'LSE',                name:'British Land' },
+  'BZLFY:BNZL.L':      { ratio:2,      adr:'BZLFY',  primary:'BNZL.L',       currency:'GBP', exchange:'LSE',                name:'Bunzl' },
+  'BURBY:BRBY.L':      { ratio:1,      adr:'BURBY',  primary:'BRBY.L',       currency:'GBP', exchange:'LSE',                name:'Burberry Group' },
+  'BYDDY:1211.HK':     { ratio:1,      adr:'BYDDY',  primary:'1211.HK',      currency:'HKD', exchange:'HKEX',               name:'BYD Co (H shares)' },
+  'CUK:CCL.L':         { ratio:1,      adr:'CUK',    primary:'CCL.L',        currency:'GBP', exchange:'LSE',                name:'Carnival plc' },
+  'CPCAY:0293.HK':     { ratio:0.2,    adr:'CPCAY',  primary:'0293.HK',      currency:'HKD', exchange:'HKEX',               name:'Cathay Pacific' },
+  'CPYYY:CNA.L':       { ratio:0.25,   adr:'CPYYY',  primary:'CNA.L',        currency:'GBP', exchange:'LSE',                name:'Centrica' },
+  'CRHKY:0291.HK':     { ratio:0.5,    adr:'CRHKY',  primary:'0291.HK',      currency:'HKD', exchange:'HKEX',               name:'China Resources Beer' },
+  'USPCY:1725.HK':     { ratio:0.1,    adr:'USPCY',  primary:'1725.HK',      currency:'HKD', exchange:'HKEX',               name:'China Strategic Technology' },
+  'CTPCY:0267.HK':     { ratio:0.2,    adr:'CTPCY',  primary:'0267.HK',      currency:'HKD', exchange:'HKEX',               name:'CITIC Ltd' },
+  'CLPHY:0002.HK':     { ratio:1,      adr:'CLPHY',  primary:'0002.HK',      currency:'HKD', exchange:'HKEX',               name:'CLP Holdings' },
+  'DEO:DGE.L':         { ratio:0.25,   adr:'DEO',    primary:'DGE.L',        currency:'GBP', exchange:'LSE',                name:'Diageo' },
+  'EXPGY:EXPN.L':      { ratio:1,      adr:'EXPGY',  primary:'EXPN.L',       currency:'GBP', exchange:'LSE',                name:'Experian' },
+  'FPAFY:0142.HK':     { ratio:0.2,    adr:'FPAFY',  primary:'0142.HK',      currency:'HKD', exchange:'HKEX',               name:'First Pacific' },
+  'HNLGY:0010.HK':     { ratio:0.2,    adr:'HNLGY',  primary:'0010.HK',      currency:'HKD', exchange:'HKEX',               name:'Hang Lung Group' },
+  'HLPPY:0101.HK':     { ratio:0.2,    adr:'HLPPY',  primary:'0101.HK',      currency:'HKD', exchange:'HKEX',               name:'Hang Lung Properties' },
+  'HDVTY:0097.HK':     { ratio:0.1,    adr:'HDVTY',  primary:'0097.HK',      currency:'HKD', exchange:'HKEX',               name:'Henderson Investment' },
+  'HLDCY:0012.HK':     { ratio:1,      adr:'HLDCY',  primary:'0012.HK',      currency:'HKD', exchange:'HKEX',               name:'Henderson Land' },
+  'HKMPY:HIK.L':       { ratio:0.5,    adr:'HKMPY',  primary:'HIK.L',        currency:'GBP', exchange:'LSE',                name:'Hikma Pharmaceuticals' },
+  'HOKCY:0003.HK':     { ratio:1,      adr:'HOKCY',  primary:'0003.HK',      currency:'HKD', exchange:'HKEX',               name:'HK & China Gas' },
+  'HYSNY:0014.HK':     { ratio:0.5,    adr:'HYSNY',  primary:'0014.HK',      currency:'HKD', exchange:'HKEX',               name:'Hysan Development' },
+  'BZ:2076.HK':        { ratio:0.5,    adr:'BZ',     primary:'2076.HK',      currency:'HKD', exchange:'HKEX',               name:'Kanzhun (BOSS Zhipin)',      note:'Monitor PCAOB/HFCAA delisting risk.' },
+  'KGFHY:KGF.L':       { ratio:0.5,    adr:'KGFHY',  primary:'KGF.L',        currency:'GBP', exchange:'LSE',                name:'Kingfisher' },
+  'KKPNY:KPN.AS':      { ratio:1,      adr:'KKPNY',  primary:'KPN.AS',       currency:'EUR', exchange:'Euronext Amsterdam', name:'KPN' },
+  'LMPMY:2314.HK':     { ratio:0.1,    adr:'LMPMY',  primary:'2314.HK',      currency:'HKD', exchange:'HKEX',               name:'Lee & Man Paper' },
+  'LGGNY:LGEN.L':      { ratio:0.2,    adr:'LGGNY',  primary:'LGEN.L',       currency:'GBP', exchange:'LSE',                name:'Legal & General' },
+  'LNVGY:0992.HK':     { ratio:0.05,   adr:'LNVGY',  primary:'0992.HK',      currency:'HKD', exchange:'HKEX',               name:'Lenovo Group' },
+  'LYG:LLOY.L':        { ratio:0.25,   adr:'LYG',    primary:'LLOY.L',       currency:'GBP', exchange:'LSE',                name:'Lloyds Banking Group' },
+  'MAKSY:MKS.L':       { ratio:0.5,    adr:'MAKSY',  primary:'MKS.L',        currency:'GBP', exchange:'LSE',                name:'Marks & Spencer' },
+  'MPNGY:3690.HK':     { ratio:0.5,    adr:'MPNGY',  primary:'3690.HK',      currency:'HKD', exchange:'HKEX',               name:'Meituan',                   note:'Monitor PCAOB/HFCAA delisting risk.' },
+  'NTES:9999.HK':      { ratio:0.2,    adr:'NTES',   primary:'9999.HK',      currency:'HKD', exchange:'HKEX',               name:'NetEase',                   note:'Monitor PCAOB/HFCAA delisting risk.' },
+  'NDVLY:0017.HK':     { ratio:2,      adr:'NDVLY',  primary:'0017.HK',      currency:'HKD', exchange:'HKEX',               name:'New World Development' },
+  'NIO:9866.HK':       { ratio:1,      adr:'NIO',    primary:'9866.HK',      currency:'HKD', exchange:'HKEX',               name:'NIO',                       note:'Monitor PCAOB/HFCAA delisting risk.' },
+  'NOAH:6686.HK':      { ratio:0.2,    adr:'NOAH',   primary:'6686.HK',      currency:'HKD', exchange:'HKEX',               name:'Noah Holdings' },
+  'PSO:PSON.L':        { ratio:1,      adr:'PSO',    primary:'PSON.L',       currency:'GBP', exchange:'LSE',                name:'Pearson' },
+  'HGKGY:0006.HK':     { ratio:1,      adr:'HGKGY',  primary:'0006.HK',      currency:'HKD', exchange:'HKEX',               name:'Power Assets Holdings' },
+  'PUK:PRU.L':         { ratio:0.5,    adr:'PUK',    primary:'PRU.L',        currency:'GBP', exchange:'LSE',                name:'Prudential plc' },
+  'QFIN:3660.HK':      { ratio:0.5,    adr:'QFIN',   primary:'3660.HK',      currency:'HKD', exchange:'HKEX',               name:'QFIN Holdings',             note:'Monitor PCAOB/HFCAA delisting risk.' },
+  'RTO:RTO.L':         { ratio:0.2,    adr:'RTO',    primary:'RTO.L',        currency:'GBP', exchange:'LSE',                name:'Rentokil Initial' },
+  'RYCEY:RR.L':        { ratio:1,      adr:'RYCEY',  primary:'RR.L',         currency:'GBP', exchange:'LSE',                name:'Rolls-Royce' },
+  'JSAIY:SBRY.L':      { ratio:0.25,   adr:'JSAIY',  primary:'SBRY.L',       currency:'GBP', exchange:'LSE',                name:"Sainsbury's" },
+  'SGHIY:0363.HK':     { ratio:0.1,    adr:'SGHIY',  primary:'0363.HK',      currency:'HKD', exchange:'HKEX',               name:'Shanghai Industrial' },
+  'SHALY:0069.HK':     { ratio:0.05,   adr:'SHALY',  primary:'0069.HK',      currency:'HKD', exchange:'HKEX',               name:'Shangri-La Asia' },
+  'SNLAY:0083.HK':     { ratio:0.2,    adr:'SNLAY',  primary:'0083.HK',      currency:'HKD', exchange:'HKEX',               name:'Sino Land' },
+  'SNN:SN.L':          { ratio:0.5,    adr:'SNN',    primary:'SN.L',         currency:'GBP', exchange:'LSE',                name:'Smith & Nephew' },
+  'SMGZY:SMIN.L':      { ratio:1,      adr:'SMGZY',  primary:'SMIN.L',       currency:'GBP', exchange:'LSE',                name:'Smiths Group' },
+  'SUHJY:0016.HK':     { ratio:1,      adr:'SUHJY',  primary:'0016.HK',      currency:'HKD', exchange:'HKEX',               name:'Sun Hung Kai Properties' },
+  'SWRAY:0019.HK':     { ratio:1,      adr:'SWRAY',  primary:'0019.HK',      currency:'HKD', exchange:'HKEX',               name:'Swire Pacific (A)' },
+  'SWRBY:0087.HK':     { ratio:0.2,    adr:'SWRBY',  primary:'0087.HK',      currency:'HKD', exchange:'HKEX',               name:'Swire Pacific (B)' },
+  'TTNDY:0669.HK':     { ratio:0.2,    adr:'TTNDY',  primary:'0669.HK',      currency:'HKD', exchange:'HKEX',               name:'Techtronic Industries' },
+  'TCOM:9961.HK':      { ratio:1,      adr:'TCOM',   primary:'9961.HK',      currency:'HKD', exchange:'HKEX',               name:'Trip.com',                  note:'Monitor PCAOB/HFCAA delisting risk.' },
+  'TUYA:2391.HK':      { ratio:1,      adr:'TUYA',   primary:'2391.HK',      currency:'HKD', exchange:'HKEX',               name:'Tuya Inc',                  note:'Monitor PCAOB/HFCAA delisting risk.' },
+  'UUGRY:UU.L':        { ratio:0.5,    adr:'UUGRY',  primary:'UU.L',         currency:'GBP', exchange:'LSE',                name:'United Utilities' },
+  'JDWPY:JDW.L':       { ratio:0.2,    adr:'JDWPY',  primary:'JDW.L',        currency:'GBP', exchange:'LSE',                name:'J.D. Wetherspoon' },
+  'XPEV:9868.HK':      { ratio:0.5,    adr:'XPEV',   primary:'9868.HK',      currency:'HKD', exchange:'HKEX',               name:'XPeng',                     note:'Monitor PCAOB/HFCAA delisting risk.' },
+  'ZLAB:9688.HK':      { ratio:0.1,    adr:'ZLAB',   primary:'9688.HK',      currency:'HKD', exchange:'HKEX',               name:'Zai Lab',                   note:'Monitor PCAOB/HFCAA delisting risk.' },
+  'ZH:2390.HK':        { ratio:0.3333, adr:'ZH',     primary:'2390.HK',      currency:'HKD', exchange:'HKEX',               name:'Zhihu',                     note:'Monitor PCAOB/HFCAA delisting risk.' },
 };
 
 const tickerIndex = {};
@@ -101,6 +168,73 @@ const adrRegistry = {
   'WIT':    { level:'III', market:'NYSE',    sponsored:true },
   'INFY':   { level:'III', market:'NYSE',    sponsored:true },
   'BHP':    { level:'III', market:'NYSE',    sponsored:true },
+  'AAGIY':  {},
+  'ARCAY':  {},
+  'ASMIY':  {},
+  'BAESY':  {},
+  'BIDU':   {},
+  'BKEAY':  {},
+  'BCS':    {},
+  'BILI':   {},
+  'BHKLY':  {},
+  'BTI':    {},
+  'BTLCY':  {},
+  'BZLFY':  {},
+  'BURBY':  {},
+  'BYDDY':  {},
+  'CUK':    {},
+  'CPCAY':  {},
+  'CPYYY':  {},
+  'CRHKY':  {},
+  'USPCY':  {},
+  'CTPCY':  {},
+  'CLPHY':  {},
+  'DEO':    {},
+  'EXPGY':  {},
+  'FPAFY':  {},
+  'HNLGY':  {},
+  'HLPPY':  {},
+  'HDVTY':  {},
+  'HLDCY':  {},
+  'HKMPY':  {},
+  'HOKCY':  {},
+  'HYSNY':  {},
+  'BZ':     {},
+  'KGFHY':  {},
+  'KKPNY':  {},
+  'LMPMY':  {},
+  'LGGNY':  {},
+  'LNVGY':  {},
+  'LYG':    {},
+  'MAKSY':  {},
+  'MPNGY':  {},
+  'NTES':   {},
+  'NDVLY':  {},
+  'NIO':    {},
+  'NOAH':   {},
+  'PSO':    {},
+  'HGKGY':  {},
+  'PUK':    {},
+  'QFIN':   {},
+  'RTO':    {},
+  'RYCEY':  {},
+  'JSAIY':  {},
+  'SGHIY':  {},
+  'SHALY':  {},
+  'SNLAY':  {},
+  'SNN':    {},
+  'SMGZY':  {},
+  'SUHJY':  {},
+  'SWRAY':  {},
+  'SWRBY':  {},
+  'TTNDY':  {},
+  'TCOM':   {},
+  'TUYA':   {},
+  'UUGRY':  {},
+  'JDWPY':  {},
+  'XPEV':   {},
+  'ZLAB':   {},
+  'ZH':     {},
 };
 
 const levelTooltips = {
@@ -109,14 +243,8 @@ const levelTooltips = {
   'III': { title: 'Level III ADR', detail: 'Exchange-listed. Strictest SEC requirements. Can raise capital in US markets.' },
 };
 
-const localCommissionRate = 0.10;
 const commissionNoteHtml = '<a href="https://www.ibkr.com/commissions" target="_blank" rel="noopener noreferrer">IBKR</a> · <a href="https://robinhood.com/us/en/support/articles/trading-fees-on-robinhood/" target="_blank" rel="noopener noreferrer">Robinhood</a> · <a href="https://www.schwab.com/pricing" target="_blank" rel="noopener noreferrer">Schwab</a>';
 
-function calculateLocalCommission(localQuantity) {
-  return localQuantity * localCommissionRate;
-}
-
-let lastAutoLocalCommission = null;
 let lastAutoAdrCommission = null;
 let ibkrAdrOverridden = false;
 let ibkrLocalOverridden = false;
@@ -361,10 +489,10 @@ async function tryAutoPopulatePair(enteredTicker, enteredSide) {
   const ratioField = document.querySelector('#ratio');
   if (ratioField) ratioField.value = pair.ratio;
 
-  // Set ratioWarning — tag as pair-sourced so updateView doesn't overwrite with generic warning
+  // Tag ratioWarning as pair-sourced so updateView doesn't overwrite with generic warning
   const ratioWarning = document.querySelector('#ratioWarning');
   if (ratioWarning) {
-    ratioWarning.textContent = `ⓘ Verify ratio`;
+    ratioWarning.textContent = '';
     delete ratioWarning.dataset.tone;
     ratioWarning.dataset.source = 'pair';
   }
@@ -409,7 +537,7 @@ function renderAdrBadge(ticker) {
   if (existing) existing.remove();
 
   const entry = adrRegistry[ticker.toUpperCase()];
-  if (!entry) return;
+  if (!entry || !entry.level) return;
 
   // Look up depositary from knownPairs
   const pairKey = tickerIndex[ticker.toUpperCase()];
@@ -644,13 +772,8 @@ function updateView() {
 
   // Apply commission auto-fill to values before calculating
   if (!ibkrLocalOverridden) {
-    const autoLocalComm = calculateLocalCommission(values.localQuantity);
-    const currentLocalComm = parseFloat(document.querySelector('#localCommission').value) || 0;
-    if (currentLocalComm === 0 || currentLocalComm === lastAutoLocalCommission) {
-      values.localCommission = autoLocalComm;
-      document.querySelector('#localCommission').value = autoLocalComm.toFixed(2);
-      lastAutoLocalCommission = autoLocalComm;
-    }
+    values.localCommission = 0;
+    document.querySelector('#localCommission').value = '0';
   }
   if (!ibkrAdrOverridden) {
     values.adrCommission = 0;
@@ -835,6 +958,8 @@ function renderSuggestions(side, quotes) {
       const nameEl = document.querySelector(`#${side}Name`);
       nameEl.textContent = `${quote.name}${exchangeInfo}`;
 
+      hideSuggestions(side);
+
       if (side === 'adr') {
         await priceFetcher.autoFetch(quote.symbol, 'adr');
         renderAdrBadge(quote.symbol);
@@ -850,7 +975,6 @@ function renderSuggestions(side, quotes) {
 
       await tryAutoPopulatePair(quote.symbol, side);
 
-      hideSuggestions(side);
       updateView();
     });
     list.append(button);
@@ -962,7 +1086,6 @@ document.querySelector('#localCommission').addEventListener('input', () => {
   const val = document.querySelector('#localCommission').value;
   if (val === '') {
     ibkrLocalOverridden = false;
-    lastAutoLocalCommission = null;
   }
 });
 document.querySelector('#adrCommission').addEventListener('focus', () => {
@@ -1049,6 +1172,55 @@ document.querySelector("#refreshButton").addEventListener("click", async () => {
     button.disabled = false;
     button.innerHTML = '<span class="icon">↻</span> Update Prices';
   }
+});
+
+// Reset button
+document.querySelector("#resetButton").addEventListener("click", async () => {
+  // Clear persisted session
+  localStorage.removeItem(storageKey);
+
+  // Reset override flags
+  ibkrAdrOverridden = false;
+  ibkrLocalOverridden = false;
+  lastAutoAdrCommission = null;
+
+  // Reset all input fields to defaults
+  document.querySelector("#adrTicker").value = defaults.adrTicker;
+  document.querySelector("#localTicker").value = defaults.localTicker;
+  document.querySelector("#adrPrice").value = '';
+  document.querySelector("#localPrice").value = '';
+  document.querySelector("#ratio").value = defaults.ratio;
+  document.querySelector("#localQuantity").value = defaults.localQuantity;
+  document.querySelector("#adrCommission").value = '0';
+  document.querySelector("#localCommission").value = '0';
+  document.querySelector("#adrPassThroughFee").value = defaults.adrPassThroughFee;
+  document.querySelector("#localToUsdRate").value = '';
+  document.querySelector("#localCurrency").value = defaults.localCurrency;
+
+  // Reset name labels
+  document.querySelector("#adrName").textContent = defaults.adrName;
+  document.querySelector("#localName").textContent = defaults.localName;
+  document.querySelector("#currencyName").textContent = '';
+
+  // Remove badges and notes
+  document.querySelectorAll('.auto-match-note').forEach(el => el.remove());
+  document.querySelector('#adrTicker')?.closest('label')?.querySelector('.adr-badge-wrapper')?.remove();
+  const ratioWarning = document.querySelector('#ratioWarning');
+  if (ratioWarning) {
+    ratioWarning.textContent = '';
+    delete ratioWarning.dataset.tone;
+    ratioWarning.dataset.source = 'pair';
+  }
+
+  // Fetch fresh prices and FX for defaults
+  await Promise.all([
+    priceFetcher.autoFetch(defaults.adrTicker, 'adr'),
+    priceFetcher.autoFetch(defaults.localTicker, 'local'),
+    fxFetcher.autoFetch(defaults.localCurrency, 'USD'),
+  ]);
+  renderAdrBadge(defaults.adrTicker);
+  await loadFXHistory();
+  updateView();
 });
 
 // ADR Ratio search helper
@@ -1153,7 +1325,12 @@ function renderSparkline(data, breakEvenRate, currency) {
   if (!canvas || !data || data.length === 0) return;
 
   const container = canvas.parentElement;
-  canvas.width = container.clientWidth || 280;
+  const containerWidth = container.clientWidth;
+  if (!containerWidth) {
+    requestAnimationFrame(() => renderSparkline(data, breakEvenRate, currency));
+    return;
+  }
+  canvas.width = containerWidth;
   canvas.height = 120;
 
   const ctx = canvas.getContext('2d');
@@ -1282,7 +1459,10 @@ if (!_hasUrlParams) {
       await tryAutoPopulatePair(adr, 'adr');
       renderAdrBadge(adr);
       const currency = document.querySelector('#localCurrency').value.trim();
-      if (currency && currency !== 'USD') await loadFXHistory();
+      if (currency && currency !== 'USD') {
+        await fxFetcher.autoFetch(currency, 'USD');
+        await loadFXHistory();
+      }
       updateView();
     }
   })();

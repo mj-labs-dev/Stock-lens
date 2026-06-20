@@ -309,42 +309,57 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (url.pathname === "/api/fx-history") {
-    const from = url.searchParams.get("from") || "";
-    const to = url.searchParams.get("to") || "USD";
-    
+    const from = (url.searchParams.get("from") || "").toUpperCase();
+    const to = (url.searchParams.get("to") || "USD").toUpperCase();
+
     if (!from) {
       send(res, 400, JSON.stringify({ error: "from parameter required" }));
       return;
     }
 
+    // Try Frankfurter first (ECB-based, major currencies only)
     try {
-      // Calculate date range (6 months ago to today)
       const endDate = new Date();
       const startDate = new Date();
       startDate.setMonth(startDate.getMonth() - 6);
-      
       const startStr = startDate.toISOString().split('T')[0];
       const endStr = endDate.toISOString().split('T')[0];
-      
-      const frankfurterUrl = `https://api.frankfurter.app/${startStr}..${endStr}?from=${encodeURIComponent(from.toUpperCase())}&to=${encodeURIComponent(to.toUpperCase())}`;
-      const response = await fetchJson(frankfurterUrl);
-      
-      // Transform response into array of {date, rate} objects
+
+      const response = await fetchJson(`https://api.frankfurter.app/${startStr}..${endStr}?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`);
       const rates = Object.entries(response.rates || {}).map(([date, rateObj]) => ({
         date,
-        rate: rateObj[to.toUpperCase()]
+        rate: rateObj[to]
       }));
-      
-      send(res, 200, JSON.stringify({
-        rates,
-        source: "Frankfurter/ECB",
-        fromCurrency: from.toUpperCase(),
-        toCurrency: to.toUpperCase()
-      }));
-    } catch (error) {
-      console.error("FX history error:", error.message);
-      send(res, 502, JSON.stringify({ error: "fx_history_unavailable" }));
+
+      if (rates.length > 0) {
+        send(res, 200, JSON.stringify({ rates, source: "Frankfurter/ECB", fromCurrency: from, toCurrency: to }));
+        return;
+      }
+    } catch {
+      // Fall through to Yahoo
     }
+
+    // Fallback: Yahoo Finance 6mo daily chart
+    try {
+      const symbol = `${from}${to}=X`;
+      const data = await fetchJson(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=6mo&interval=1d`);
+      const result = data.chart?.result?.[0];
+      const timestamps = result?.timestamp || [];
+      const closes = result?.indicators?.quote?.[0]?.close || [];
+
+      const rates = timestamps
+        .map((ts, i) => ({ date: new Date(ts * 1000).toISOString().split('T')[0], rate: closes[i] }))
+        .filter(d => d.rate != null && Number.isFinite(d.rate));
+
+      if (rates.length > 0) {
+        send(res, 200, JSON.stringify({ rates, source: "Yahoo Finance", fromCurrency: from, toCurrency: to }));
+        return;
+      }
+    } catch {
+      // Fall through
+    }
+
+    send(res, 502, JSON.stringify({ error: "fx_history_unavailable" }));
     return;
   }
 

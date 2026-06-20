@@ -17,6 +17,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "from parameter required" });
   }
 
+  // Try Frankfurter first (ECB-based, major currencies only)
   try {
     const endDate = new Date();
     const startDate = new Date();
@@ -33,13 +34,34 @@ export default async function handler(req, res) {
       rate: rateObj[to]
     }));
 
-    return res.status(200).json({
-      rates,
-      source: "Frankfurter/ECB",
-      fromCurrency: from,
-      toCurrency: to
-    });
+    if (rates.length > 0) {
+      return res.status(200).json({ rates, source: "Frankfurter/ECB", fromCurrency: from, toCurrency: to });
+    }
   } catch {
-    return res.status(502).json({ error: "fx_history_unavailable" });
+    // Fall through to Yahoo
   }
+
+  // Fallback: Yahoo Finance 6mo daily chart
+  try {
+    const symbol = `${from}${to}=X`;
+    const data = await fetchJson(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=6mo&interval=1d`);
+    const result = data.chart?.result?.[0];
+    const timestamps = result?.timestamp || [];
+    const closes = result?.indicators?.quote?.[0]?.close || [];
+
+    const rates = timestamps
+      .map((ts, i) => ({
+        date: new Date(ts * 1000).toISOString().split("T")[0],
+        rate: closes[i]
+      }))
+      .filter(d => d.rate != null && Number.isFinite(d.rate));
+
+    if (rates.length > 0) {
+      return res.status(200).json({ rates, source: "Yahoo Finance", fromCurrency: from, toCurrency: to });
+    }
+  } catch {
+    // Fall through
+  }
+
+  return res.status(502).json({ error: "fx_history_unavailable" });
 }
